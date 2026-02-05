@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  font-family: 'Outfit', Arial, sans-serif; /* Added Outfit as requested in previous guidelines or just general good practice, falling back to Arial */
+  background: #f5f8fd;
+  color: #102a43;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Global Nav Style */
+.nav {
+  background: white;
+  padding: 18px 40px;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+button {
+  transition: transform 0.1s ease, background-color 0.2s;
+}
+
+button:active {
+  transform: scale(0.98);
+}

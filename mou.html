@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MOU Draft Editor | Vault</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- PDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    body {
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:#f5f8fd;
+      color:#102a43;
+    }
+
+    .nav {
+      background:white;
+      padding:16px 30px;
+      font-weight:bold;
+      box-shadow:0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .container {
+      display:flex;
+      padding:30px;
+      gap:20px;
+    }
+
+    .editor, .preview {
+      background:white;
+      padding:20px;
+      border-radius:10px;
+      width:50%;
+      box-shadow:0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width:100%;
+      padding:8px;
+      margin-bottom:10px;
+      border:1px solid #ddd;
+      border-radius:6px;
+    }
+
+    button {
+      background:#3557f2;
+      color:white;
+      border:none;
+      padding:10px 15px;
+      border-radius:6px;
+      cursor:pointer;
+      margin-top:10px;
+      width:100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav">VAULT – MOU Draft</div>
+
+<div class="container">
+
+  <!-- LEFT: FORM -->
+  <div class="editor">
+    <h3>Fill Details</h3>
+
+    <input id="buyer" placeholder="Buyer Name">
+    <input id="seller" placeholder="Seller Name">
+    <input id="property" placeholder="Property Address">
+    <input id="amount" placeholder="Amount">
+    <input id="date" placeholder="Date">
+
+    <button onclick="updateDraft()">Update Draft</button>
+    <button onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <!-- RIGHT: PREVIEW -->
+  <div class="preview" id="draft">
+    <h2 style="text-align:center">MEMORANDUM OF UNDERSTANDING</h2>
+
+    <p>
+      This Memorandum of Understanding is made on
+      <b id="d_date">[Date]</b> between
+      <b id="d_seller">[Seller]</b> (Seller) and
+      <b id="d_buyer">[Buyer]</b> (Buyer).
+    </p>
+
+    <p>
+      The Seller agrees to sell the property located at
+      <b id="d_property">[Property Address]</b>
+      for a total consideration of ₹<b id="d_amount">[Amount]</b>.
+    </p>
+
+    <p>
+      Both parties agree to the terms and conditions stated herein.
+    </p>
+
+    <br>
+    <p>Seller Signature: ____________________</p>
+    <p>Buyer Signature: ____________________</p>
+  </div>
+
+</div>
+
+<script>
+function updateDraft(){
+  d_buyer.innerText = buyer.value || "[Buyer]";
+  d_seller.innerText = seller.value || "[Seller]";
+  d_property.innerText = property.value || "[Property]";
+  d_amount.innerText = amount.value || "[Amount]";
+  d_date.innerText = date.value || "[Date]";
+}
+
+function downloadPDF(){
+  let phone = prompt("Enter your phone number to download the draft");
+
+  if(!phone){
+    alert("Phone number is required");
+    return;
+  }
+
+  // Here you can later send phone to backend / Google Sheet
+
+  html2pdf()
+    .from(document.getElementById("draft"))
+    .save("MOU-Draft.pdf");
+}
+</script>
+
+</body>
+</html>
