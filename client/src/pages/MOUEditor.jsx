@@ -85,7 +85,7 @@ const MOUEditor = () => {
 
         setLoading(true);
         try {
-            await axios.post('http://localhost:3000/api/save-user', {
+            await axios.post('/api/save-user', {
                 name: userName,
                 phone: userPhone,
                 date: new Date().toISOString(),
@@ -113,7 +113,7 @@ const MOUEditor = () => {
 
         setLoading(true);
         try {
-            await axios.post('http://localhost:3000/api/save-user', {
+            await axios.post('/api/save-user', {
                 name: userName,
                 phone: userPhone,
                 date: new Date().toISOString(),
