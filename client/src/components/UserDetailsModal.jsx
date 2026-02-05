@@ -69,22 +69,24 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit, title = "Download Documen
 
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
-                        <label className="input-label">Full Name</label>
+                        <label className="input-label">Full Name <span style={{color:'red'}}>*</span></label>
                         <input 
                             className="input-field" 
                             placeholder="John Doe" 
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             autoFocus
+                            required
                         />
                     </div>
                     <div className="input-group">
-                        <label className="input-label">Phone Number</label>
+                        <label className="input-label">Phone Number <span style={{color:'red'}}>*</span></label>
                         <input 
                             className="input-field" 
                             placeholder="+91 98765 43210" 
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
+                            required
                         />
                     </div>
 

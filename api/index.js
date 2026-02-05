@@ -49,7 +49,7 @@ app.post('/api/save-user', async (req, res) => {
         }
 
         const formattedDate = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-        const values = [[formattedDate, name, phone, email || '', role || '']];
+        const values = [[formattedDate, name, phone]];
 
         const resource = {
             values,
@@ -57,7 +57,7 @@ app.post('/api/save-user', async (req, res) => {
 
         const result = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Sheet1!A:E',
+            range: 'Sheet1!A:C',
             valueInputOption: 'USER_ENTERED',
             resource,
         });

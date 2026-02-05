@@ -153,14 +153,27 @@ const MOUEditor = () => {
     const handleDownloadRequest = (type) => {
         setDownloadType(type);
         setModalOpen(true);
+        if (window.clarity) {
+            window.clarity("event", `download_initiated_${type.toLowerCase()}`);
+        }
     };
 
     const handleModalSubmit = async ({ name, phone }) => {
         setModalOpen(false);
+        if (window.clarity) {
+            window.clarity("event", `download_completed_${downloadType ? downloadType.toLowerCase() : 'unknown'}`);
+        }
         if (downloadType === 'PDF') {
             await downloadPDF(name, phone);
         } else {
             await downloadDOCX(name, phone);
+        }
+    };
+
+    const handleModalClose = () => {
+        setModalOpen(false);
+        if (window.clarity) {
+            window.clarity("event", `download_skipped_${downloadType ? downloadType.toLowerCase() : 'unknown'}`);
         }
     };
 
@@ -529,7 +542,7 @@ const MOUEditor = () => {
             {/* Modal */}
             <UserDetailsModal 
                 isOpen={modalOpen} 
-                onClose={() => setModalOpen(false)} 
+                onClose={handleModalClose} 
                 onSubmit={handleModalSubmit}
                 title={downloadType === 'PDF' ? 'PDF Document' : 'Word Document'}
             />
