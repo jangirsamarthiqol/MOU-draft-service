@@ -13,8 +13,8 @@
     "axios": "^1.13.4",
     "buffer": "^6.0.3",
     "file-saver": "^2.0.5",
-    "html-docx-js-typescript": "^0.1.5",
     "html2pdf.js": "^0.14.0",
+    "lucide-react": "^0.563.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0"

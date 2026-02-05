@@ -47,7 +47,9 @@ app.post('/api/save-user', async (req, res) => {
         }
 
         // Prepare values to append
-        const values = [[date || new Date().toISOString(), name, phone, email || '', role || '']];
+        // Prepare values to append
+        const formattedDate = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+        const values = [[formattedDate, name, phone, email || '', role || '']];
 
         const resource = {
             values,
