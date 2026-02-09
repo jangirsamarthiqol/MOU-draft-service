@@ -65,8 +65,9 @@ const dateToWords = (dateString) => {
 const MOUEditor = () => {
     const [loading, setLoading] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
-    const [downloadType, setDownloadType] = useState(null); // 'PDF' or 'DOCX'
+    const [downloadType, setDownloadType] = useState(null);
     const [expandedSection, setExpandedSection] = useState('general');
+    const [mobileView, setMobileView] = useState('form'); // 'form' or 'preview'
     const [formData, setFormData] = useState({
         agreementDate: '2026-01-25',
         place: 'Bangalore',
@@ -245,18 +246,10 @@ const MOUEditor = () => {
     );
 
     return (
-        <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+        <div className="editor-container">
             {/* Left Sidebar: Form */}
-            <div style={{ 
-                width: '400px', 
-                minWidth: '350px',
-                overflowY: 'auto', 
-                borderRight: '1px solid var(--border-light)', 
-                background: 'var(--bg-sidebar)',
-                display: 'flex',
-                flexDirection: 'column'
-            }}>
-                <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)', background: 'white' }}>
+            <div className={`editor-sidebar ${mobileView !== 'form' ? 'hidden-mobile' : ''}`}>
+                <div className="editor-header" style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)', background: 'white' }}>
                     <h2 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
                         <FileText className="text-primary" /> Editor
                     </h2>
@@ -269,7 +262,7 @@ const MOUEditor = () => {
                     {/* General Section */}
                     <AccordionHeader title="General Details" icon={Calendar} section="general" />
                     {expandedSection === 'general' && (
-                        <div style={{ padding: '1.5rem', background: 'white' }}>
+                        <div className="accordion-content" style={{ padding: '1.5rem', background: 'white' }}>
                             <div className="input-group">
                                 <label className="input-label">test Agreement Date</label>
                                 <input className="input-field" placeholder="e.g. 25th January 2026" value={formData.agreementDate} onChange={(e) => handleChange('root', 'agreementDate', e.target.value)} />
@@ -436,9 +429,9 @@ const MOUEditor = () => {
             </div>
 
             {/* Right: Preview & Action */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#eef2f6' }}>
+            <div className={`editor-preview ${mobileView !== 'preview' ? 'hidden-mobile' : ''}`}>
                 {/* Top Action Bar */}
-                <div style={{ 
+                <div className="preview-action-bar" style={{ 
                     padding: '1rem 2rem', 
                     background: 'white', 
                     boxShadow: 'var(--shadow-sm)', 
@@ -462,8 +455,8 @@ const MOUEditor = () => {
                 </div>
                 
                 {/* Preview Area */}
-                <div style={{ flex: 1, overflowY: 'auto', padding: '2rem', display: 'flex', justifyContent: 'center' }}>
-                    <div id="mou-preview" style={{ 
+                <div className="preview-container" style={{ flex: 1, overflowY: 'auto', padding: '2rem', display: 'flex', justifyContent: 'center' }}>
+                    <div id="mou-preview" className="preview-document" style={{ 
                         background: 'white', 
                         width: '8.5in', 
                         minHeight: '11in', 
@@ -557,7 +550,7 @@ const MOUEditor = () => {
                                 </ol>
                             </li>
                             <li style={{ marginBottom: '10px' }}>
-                                The First Parties confirms that he has not entered into any agreements for sale or transfer and agrees that he will not enter into any Agreements for sale or transfer of the Schedule ‘C’ Property with anyone in any manner, until this MOU is in force.
+                                The First Parties confirms that he has not entered into any agreements for sale or transfer and agrees that he will not enter into any Agreements for sale or transfer of the Schedule 'C' Property with anyone in any manner, until this MOU is in force.
                             </li>
                             <li style={{ marginBottom: '10px' }}>
                                 ARBITRATION: Should any dispute arise between the parties hereto at anytime during the tenure of this MOU, the same shall, as soon as the dispute shall arise, be referred to the sole arbitration of a person to be mutually agreed to by both the parties to this MOU.
@@ -577,7 +570,7 @@ const MOUEditor = () => {
                         </p>
 
                         {/* Signatures */}
-                        <div style={{ marginTop: '50px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '40px' }}>
+                        <div className="signatures-section" style={{ marginTop: '50px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '40px' }}>
                             <div style={{ flex: 1, minWidth: '200px' }}>
                                 <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>WITNESSES:</div>
                                 <div style={{ marginBottom: '40px' }}>
@@ -604,21 +597,47 @@ const MOUEditor = () => {
                         {/* Schedules */}
                         <div style={{pageBreakBefore: 'always'}}></div>
                         
-                        <div style={{ textAlign: 'center', fontWeight: 'bold' }}>SCHEDULE ‘A’</div>
+                        <div style={{ textAlign: 'center', fontWeight: 'bold' }}>SCHEDULE 'A'</div>
                         <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of Entire Property)</div>
                         <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleA || 'Enter Schedule A Details'}</p>
 
-                        <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE ‘B’</div>
+                        <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE 'B'</div>
                         <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Undivided interest agreed to be sold in Schedule 'A' Property)</div>
                         <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleB || 'Enter Schedule B Details'}</p>
 
-                        <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE ‘C’</div>
+                        <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE 'C'</div>
                         <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of the Apartment)</div>
                         <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleC || 'Enter Schedule C Details'}</p>
 
                     </div>
                 </div>
             </div>
+
+            {/* Mobile Tab Navigation */}
+            <div className="mobile-tabs">
+                <button 
+                    className={mobileView === 'form' ? 'active' : ''} 
+                    onClick={() => setMobileView('form')}
+                >
+                    <FileText size={20} />
+                    <span>Form</span>
+                </button>
+                <button 
+                    className={mobileView === 'preview' ? 'active' : ''} 
+                    onClick={() => setMobileView('preview')}
+                >
+                    <FileText size={20} />
+                    <span>Preview</span>
+                </button>
+                <button 
+                    onClick={() => handleDownloadRequest('PDF')}
+                    disabled={loading}
+                >
+                    <Download size={20} />
+                    <span>Download</span>
+                </button>
+            </div>
+
             {/* Modal */}
             <UserDetailsModal 
                 isOpen={modalOpen} 
