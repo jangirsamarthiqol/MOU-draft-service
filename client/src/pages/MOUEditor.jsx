@@ -16,7 +16,7 @@ import {
     Building,
     FileType
 } from 'lucide-react';
-import html2docx from 'html2docx';
+
 
 import UserDetailsModal from '../components/UserDetailsModal';
 
@@ -348,13 +348,21 @@ const MOUEditor = () => {
         console.log('Content length:', content.length);
         
         try {
-            // Convert HTML directly to DOCX
-            const converted = html2docx(content);
-            saveAs(converted, 'MOU_Draft.docx');
-            console.log('DOCX generated successfully');
+            // Wrap HTML in Word-compatible markup
+            const docContent = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office"
+                      xmlns:w="urn:schemas-microsoft-com:office:word"
+                      xmlns="http://www.w3.org/TR/REC-html40">
+                <head><meta charset="utf-8"><title>MOU Draft</title></head>
+                <body style="font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.6;">
+                    ${content}
+                </body></html>`;
+            const blob = new Blob([docContent], { type: 'application/msword' });
+            saveAs(blob, 'MOU_Draft.doc');
+            console.log('DOC generated successfully');
         } catch (error) {
-            console.error("Error generating DOCX:", error);
-            alert("Error generating DOCX file. Please try again.");
+            console.error("Error generating DOC:", error);
+            alert("Error generating DOC file. Please try again.");
         }
         setLoading(false);
     };
