@@ -81,6 +81,20 @@ const parseISODateLocal = (value) => {
     return Number.isNaN(dt.getTime()) ? null : dt;
 };
 
+const inferRelationPrefixFromTitle = (title) => {
+    const t = String(title ?? '')
+        .trim()
+        .toLowerCase()
+        .replace(/\./g, '');
+
+    // Order matters: "mrs" starts with "mr"
+    if (t === 'mrs' || t.startsWith('mrs ')) return 'W/o';
+    if (t === 'miss' || t.startsWith('miss ')) return 'D/o';
+    if (t === 'ms' || t.startsWith('ms ')) return 'D/o';
+    if (t === 'mr' || t.startsWith('mr ')) return 'S/o';
+    return null;
+};
+
 const dateToWords = (dateString) => {
     if (!dateString) return '';
 
@@ -115,10 +129,10 @@ const MOUEditor = () => {
         agreementDate: '2026-01-25',
         place: 'Bangalore',
         sellers: [
-            { title: 'Mr.', name: '', fatherName: '', age: '', address: '', aadhar: '', pan: '' }
+            { title: 'Mr.', name: '', relationPrefix: 'S/o', fatherName: '', age: '', address: '', aadhar: '', pan: '' }
         ],
         buyers: [
-            { title: 'Mr.', name: '', fatherName: '', age: '', address: '', aadhar: '', pan: '' }
+            { title: 'Mr.', name: '', relationPrefix: 'S/o', fatherName: '', age: '', address: '', aadhar: '', pan: '' }
         ],
         property: {
             scheduleA: '',
@@ -169,8 +183,24 @@ const MOUEditor = () => {
         setFormData(newData);
     };
 
+    const handleTitleChange = (partyType, index, value) => {
+        const newData = { ...formData };
+        const list = [...newData[partyType]];
+        const party = { ...list[index] };
+
+        party.title = value;
+        const inferred = inferRelationPrefixFromTitle(value);
+        if (inferred) {
+            party.relationPrefix = inferred;
+        }
+
+        list[index] = party;
+        newData[partyType] = list;
+        setFormData(newData);
+    };
+
     const addParty = (type) => {
-        const newParty = { title: 'Mr.', name: '', fatherName: '', age: '', address: '', aadhar: '', pan: '' };
+        const newParty = { title: 'Mr.', name: '', relationPrefix: 'S/o', fatherName: '', age: '', address: '', aadhar: '', pan: '' };
         setFormData({ ...formData, [type]: [...formData[type], newParty] });
     };
 
@@ -349,11 +379,16 @@ const MOUEditor = () => {
                                     </button>
                                     
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '10px' }}>
-                                        <input className="input-field" placeholder="Mr./Mrs." value={seller.title} onChange={(e) => handleChange('sellers', 'title', e.target.value, i)} />
+                                        <input className="input-field" placeholder="Mr./Mrs./Miss" value={seller.title} onChange={(e) => handleTitleChange('sellers', i, e.target.value)} />
                                         <input className="input-field" placeholder="Full Name" value={seller.name} onChange={(e) => handleChange('sellers', 'name', e.target.value, i)} />
                                     </div>
-                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: '10px' }}>
-                                        <input className="input-field" placeholder="Father's Name" value={seller.fatherName} onChange={(e) => handleChange('sellers', 'fatherName', e.target.value, i)} />
+                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 100px', gap: '10px' }}>
+                                        <select className="input-field" value={seller.relationPrefix || 'S/o'} onChange={(e) => handleChange('sellers', 'relationPrefix', e.target.value, i)}>
+                                            <option value="S/o">S/o</option>
+                                            <option value="D/o">D/o</option>
+                                            <option value="W/o">W/o</option>
+                                        </select>
+                                        <input className="input-field" placeholder="Father/Mother/Spouse Name" value={seller.fatherName} onChange={(e) => handleChange('sellers', 'fatherName', e.target.value, i)} />
                                         <input className="input-field" placeholder="Age" value={seller.age} onChange={(e) => handleChange('sellers', 'age', e.target.value, i)} />
                                     </div>
                                     <div className="input-group">
@@ -383,11 +418,16 @@ const MOUEditor = () => {
                                     </button>
                                     
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '10px' }}>
-                                        <input className="input-field" placeholder="Mr./Mrs." value={buyer.title} onChange={(e) => handleChange('buyers', 'title', e.target.value, i)} />
+                                        <input className="input-field" placeholder="Mr./Mrs./Miss" value={buyer.title} onChange={(e) => handleTitleChange('buyers', i, e.target.value)} />
                                         <input className="input-field" placeholder="Full Name" value={buyer.name} onChange={(e) => handleChange('buyers', 'name', e.target.value, i)} />
                                     </div>
-                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: '10px' }}>
-                                        <input className="input-field" placeholder="Father/Husband Name" value={buyer.fatherName} onChange={(e) => handleChange('buyers', 'fatherName', e.target.value, i)} />
+                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 100px', gap: '10px' }}>
+                                        <select className="input-field" value={buyer.relationPrefix || 'S/o'} onChange={(e) => handleChange('buyers', 'relationPrefix', e.target.value, i)}>
+                                            <option value="S/o">S/o</option>
+                                            <option value="D/o">D/o</option>
+                                            <option value="W/o">W/o</option>
+                                        </select>
+                                        <input className="input-field" placeholder="Father/Mother/Spouse Name" value={buyer.fatherName} onChange={(e) => handleChange('buyers', 'fatherName', e.target.value, i)} />
                                         <input className="input-field" placeholder="Age" value={buyer.age} onChange={(e) => handleChange('buyers', 'age', e.target.value, i)} />
                                     </div>
                                     <div className="input-group">
@@ -561,7 +601,7 @@ const MOUEditor = () => {
                         {formData.sellers.map((p, i) => (
                             <div key={i} style={{ marginBottom: '15px' }}>
                                 <b>{i+1}) {p.title} {p.name || '[Seller Name]'},</b><br/>
-                                S/o {p.fatherName || '[Father Name]'},<br/>
+                                {(p.relationPrefix || 'S/o')} {p.fatherName || '[Father/Mother/Spouse Name]'},<br/>
                                 Aged about {p.age || '[Age]'} years,<br/>
                                 Residing at: {p.address || '[Address]'}<br/>
                                 Aadhar No: {p.aadhar || '[Aadhar]'}<br/>
@@ -579,7 +619,7 @@ const MOUEditor = () => {
                         {formData.buyers.map((p, i) => (
                             <div key={i} style={{ marginBottom: '15px' }}>
                                 <b>{i+1}) {p.title} {p.name || '[Buyer Name]'},</b><br/>
-                                S/o {p.fatherName || '[Father Name]'},<br/>
+                                {(p.relationPrefix || 'S/o')} {p.fatherName || '[Father/Mother/Spouse Name]'},<br/>
                                 Aged about {p.age || '[Age]'} years,<br/>
                                 Residing at: {p.address || '[Address]'}<br/>
                                 Aadhar No: {p.aadhar || '[Aadhar]'}<br/>
