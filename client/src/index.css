@@ -158,8 +158,19 @@ body {
 select.input-field {
   -webkit-appearance: menulist;
   appearance: auto;
-  padding-right: 2rem; /* room for caret */
-  cursor: pointer;
+  padding-right: 1rem; /* Reduced padding for better visibility */
+  background-image: none; /* Remove custom background if any */
+  text-overflow: ellipsis; /* Handle long text */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: visible; /* Ensure dropdown options are visible */
+}
+
+/* Fix dropdown options visibility */
+select.input-field option {
+  padding: 8px;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 /* PDF/preview list alignment (avoid excessive hanging indent) */

@@ -496,7 +496,7 @@ const MOUEditor = () => {
                                         </select>
                                         <input className="input-field" placeholder="Full Name" value={seller.name} onChange={(e) => handleChange('sellers', 'name', e.target.value, i)} />
                                     </div>
-                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 100px', gap: '10px' }}>
+                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '100px 1fr 100px', gap: '10px' }}>
                                         <select className="input-field" value={seller.relationPrefix || 'S/o'} onChange={(e) => handleChange('sellers', 'relationPrefix', e.target.value, i)}>
                                             <option value="S/o">S/o</option>
                                             <option value="D/o">D/o</option>
@@ -539,7 +539,7 @@ const MOUEditor = () => {
                                         </select>
                                         <input className="input-field" placeholder="Full Name" value={buyer.name} onChange={(e) => handleChange('buyers', 'name', e.target.value, i)} />
                                     </div>
-                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 100px', gap: '10px' }}>
+                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '100px 1fr 100px', gap: '10px' }}>
                                         <select className="input-field" value={buyer.relationPrefix || 'S/o'} onChange={(e) => handleChange('buyers', 'relationPrefix', e.target.value, i)}>
                                             <option value="S/o">S/o</option>
                                             <option value="D/o">D/o</option>
