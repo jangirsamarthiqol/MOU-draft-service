@@ -199,15 +199,13 @@ select.input-field option {
 .preview-document p {
   text-align: justify !important;
   margin: 0 0 10pt 0 !important;
-  word-break: break-word !important;
-  overflow-wrap: anywhere !important;
-  overflow: visible !important;
+  min-height: 20px; /* keeps blank space */
+  white-space: pre-wrap; /* preserves empty lines */
 }
 
 .preview-document div {
-  word-break: break-word !important;
-  overflow-wrap: anywhere !important;
-  overflow: visible !important;
+  min-height: 20px;
+  white-space: pre-wrap;
 }
 
 .input-field:focus {

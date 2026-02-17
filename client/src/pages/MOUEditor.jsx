@@ -801,15 +801,15 @@ const MOUEditor = () => {
                         
                         <div style={{ textAlign: 'center', fontWeight: 'bold' }}>SCHEDULE 'A'</div>
                         <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of Entire Property)</div>
-                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleA || 'Enter Schedule A Details'}</p>
+                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleA || ' '}</p>
 
                         <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE 'B'</div>
                         <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Undivided interest agreed to be sold in Schedule 'A' Property)</div>
-                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleB || 'Enter Schedule B Details'}</p>
+                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleB || ' '}</p>
 
                         <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE 'C'</div>
                         <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of the Apartment)</div>
-                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleC || 'Enter Schedule C Details'}</p>
+                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleC || ' '}</p>
 
                         <div style={{ pageBreakBefore: 'always' }}></div>
 
