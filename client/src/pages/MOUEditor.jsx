@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import html2pdf from 'html2pdf.js';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
@@ -82,17 +82,23 @@ const parseISODateLocal = (value) => {
 };
 
 const inferRelationPrefixFromTitle = (title) => {
-    const t = String(title ?? '')
-        .trim()
-        .toLowerCase()
-        .replace(/\./g, '');
+    const t = String(title ?? '').trim().toLowerCase().replace(/\./g, '');
 
     // Order matters: "mrs" starts with "mr"
-    if (t === 'mrs' || t.startsWith('mrs ')) return 'W/o';
-    if (t === 'miss' || t.startsWith('miss ')) return 'D/o';
-    if (t === 'ms' || t.startsWith('ms ')) return 'D/o';
-    if (t === 'mr' || t.startsWith('mr ')) return 'S/o';
-    return null;
+    if (t === 'mrs') return 'W/o';
+    if (t === 'miss') return 'D/o';
+    if (t === 'ms') return 'D/o';
+    if (t === 'mr') return 'S/o';
+    return 'S/o';
+};
+
+const normalizeTitle = (title) => {
+    const t = String(title ?? '').trim().toLowerCase().replace(/\./g, '');
+    if (t === 'mr') return 'Mr.';
+    if (t === 'mrs') return 'Mrs.';
+    if (t === 'miss') return 'Miss.';
+    if (t === 'ms') return 'Ms.';
+    return 'Mr.';
 };
 
 const dateToWords = (dateString) => {
@@ -169,6 +175,35 @@ const MOUEditor = () => {
         setExpandedSection(expandedSection === section ? null : section);
     };
 
+    // Keep relation prefix in sync with selected title (Mr/Mrs/Miss/Ms)
+    useEffect(() => {
+        const syncList = (list) => {
+            let changed = false;
+            const next = list.map((p) => {
+                const normalizedTitle = normalizeTitle(p.title);
+                const expected = inferRelationPrefixFromTitle(normalizedTitle);
+                const nextP = { ...p, title: normalizedTitle };
+                if (!p.relationPrefix || p.relationPrefix !== expected) {
+                    nextP.relationPrefix = expected;
+                }
+                if (nextP.title !== p.title || nextP.relationPrefix !== p.relationPrefix) changed = true;
+                return nextP;
+            });
+            return { next, changed };
+        };
+
+        const sellersSync = syncList(formData.sellers);
+        const buyersSync = syncList(formData.buyers);
+        if (sellersSync.changed || buyersSync.changed) {
+            setFormData((prev) => ({
+                ...prev,
+                sellers: sellersSync.next,
+                buyers: buyersSync.next,
+            }));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const handleChange = (section, field, value, index = null, subField = null) => {
         const newData = { ...formData };
         if (section === 'root') {
@@ -188,11 +223,9 @@ const MOUEditor = () => {
         const list = [...newData[partyType]];
         const party = { ...list[index] };
 
-        party.title = value;
-        const inferred = inferRelationPrefixFromTitle(value);
-        if (inferred) {
-            party.relationPrefix = inferred;
-        }
+        const normalizedTitle = normalizeTitle(value);
+        party.title = normalizedTitle;
+        party.relationPrefix = inferRelationPrefixFromTitle(normalizedTitle);
 
         list[index] = party;
         newData[partyType] = list;
@@ -378,8 +411,13 @@ const MOUEditor = () => {
                                         <Trash2 size={14} />
                                     </button>
                                     
-                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '10px' }}>
-                                        <input className="input-field" placeholder="Mr./Mrs./Miss" value={seller.title} onChange={(e) => handleTitleChange('sellers', i, e.target.value)} />
+                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '10px' }}>
+                                        <select className="input-field" value={normalizeTitle(seller.title)} onChange={(e) => handleTitleChange('sellers', i, e.target.value)}>
+                                            <option value="Mr.">Mr.</option>
+                                            <option value="Mrs.">Mrs.</option>
+                                            <option value="Miss.">Miss.</option>
+                                            <option value="Ms.">Ms.</option>
+                                        </select>
                                         <input className="input-field" placeholder="Full Name" value={seller.name} onChange={(e) => handleChange('sellers', 'name', e.target.value, i)} />
                                     </div>
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 100px', gap: '10px' }}>
@@ -417,8 +455,13 @@ const MOUEditor = () => {
                                         <Trash2 size={14} />
                                     </button>
                                     
-                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '10px' }}>
-                                        <input className="input-field" placeholder="Mr./Mrs./Miss" value={buyer.title} onChange={(e) => handleTitleChange('buyers', i, e.target.value)} />
+                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '10px' }}>
+                                        <select className="input-field" value={normalizeTitle(buyer.title)} onChange={(e) => handleTitleChange('buyers', i, e.target.value)}>
+                                            <option value="Mr.">Mr.</option>
+                                            <option value="Mrs.">Mrs.</option>
+                                            <option value="Miss.">Miss.</option>
+                                            <option value="Ms.">Ms.</option>
+                                        </select>
                                         <input className="input-field" placeholder="Full Name" value={buyer.name} onChange={(e) => handleChange('buyers', 'name', e.target.value, i)} />
                                     </div>
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 100px', gap: '10px' }}>
