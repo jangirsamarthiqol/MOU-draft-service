@@ -162,6 +162,23 @@ select.input-field {
   cursor: pointer;
 }
 
+/* PDF/preview list alignment (avoid excessive hanging indent) */
+.preview-document ol {
+  margin: 0 !important;
+  padding-left: 0 !important;
+  list-style-position: inside;
+}
+
+.preview-document ol ol {
+  margin-top: 0.25rem !important;
+  padding-left: 1rem !important; /* keep a small nested indent */
+}
+
+.preview-document li {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
 .input-field:focus {
   outline: none;
   border-color: var(--primary);
