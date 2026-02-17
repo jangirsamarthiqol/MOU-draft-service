@@ -565,6 +565,23 @@ const MOUEditor = () => {
                             </li>
                         </ol>
 
+                        {/* Schedules - above witness/signatures */}
+                        <div style={{ marginTop: '30px' }}></div>
+                        
+                        <div style={{ textAlign: 'center', fontWeight: 'bold' }}>SCHEDULE 'A'</div>
+                        <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of Entire Property)</div>
+                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleA || 'Enter Schedule A Details'}</p>
+
+                        <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE 'B'</div>
+                        <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Undivided interest agreed to be sold in Schedule 'A' Property)</div>
+                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleB || 'Enter Schedule B Details'}</p>
+
+                        <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE 'C'</div>
+                        <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of the Apartment)</div>
+                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleC || 'Enter Schedule C Details'}</p>
+
+                        <div style={{ pageBreakBefore: 'always' }}></div>
+
                         <p style={{ marginTop: '30px', textAlign: 'justify' }}>
                             IN WITNESS WHEREOF the above-mentioned parties have signed this MOU on the day, month and year mentioned above in the presence of the following;
                         </p>
@@ -593,21 +610,6 @@ const MOUEditor = () => {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Schedules */}
-                        <div style={{pageBreakBefore: 'always'}}></div>
-                        
-                        <div style={{ textAlign: 'center', fontWeight: 'bold' }}>SCHEDULE 'A'</div>
-                        <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of Entire Property)</div>
-                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleA || 'Enter Schedule A Details'}</p>
-
-                        <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE 'B'</div>
-                        <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Undivided interest agreed to be sold in Schedule 'A' Property)</div>
-                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleB || 'Enter Schedule B Details'}</p>
-
-                        <div style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '20px' }}>SCHEDULE 'C'</div>
-                        <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of the Apartment)</div>
-                        <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleC || 'Enter Schedule C Details'}</p>
 
                     </div>
                 </div>
