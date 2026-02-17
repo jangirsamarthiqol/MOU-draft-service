@@ -154,6 +154,14 @@ body {
   box-sizing: border-box;
 }
 
+/* Ensure native dropdown caret is visible (selects were looking like inputs) */
+select.input-field {
+  -webkit-appearance: menulist;
+  appearance: auto;
+  padding-right: 2rem; /* room for caret */
+  cursor: pointer;
+}
+
 .input-field:focus {
   outline: none;
   border-color: var(--primary);
