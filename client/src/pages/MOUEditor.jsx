@@ -40,26 +40,69 @@ const numberToWords = (num) => {
     return str.trim() + ' Only';
 };
 
+const twoDigitToWords = (n) => {
+    const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+    const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+    if (n < 10) return ones[n];
+    if (n < 20) return teens[n - 10];
+    const t = Math.floor(n / 10);
+    const o = n % 10;
+    return o ? `${tens[t]} ${ones[o]}` : tens[t];
+};
+
+const yearToWords = (year) => {
+    if (!year || Number.isNaN(year)) return '';
+    if (year === 2000) return 'Two Thousand';
+    if (year > 2000 && year < 2100) {
+        const rest = year - 2000;
+        return rest ? `Two Thousand ${twoDigitToWords(rest)}`.trim() : 'Two Thousand';
+    }
+    const thousands = Math.floor(year / 1000);
+    const rest = year % 1000;
+    const thousandsWord = `${twoDigitToWords(thousands)} Thousand`.trim();
+    if (!rest) return thousandsWord;
+
+    const hundreds = Math.floor(rest / 100);
+    const lastTwo = rest % 100;
+    const hundredsWord = hundreds ? `${twoDigitToWords(hundreds)} Hundred` : '';
+    const lastTwoWord = lastTwo ? twoDigitToWords(lastTwo) : '';
+    return [thousandsWord, hundredsWord, lastTwoWord].filter(Boolean).join(' ').trim();
+};
+
+const parseISODateLocal = (value) => {
+    if (typeof value !== 'string') return null;
+    const m = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return null;
+    const y = Number(m[1]);
+    const mo = Number(m[2]) - 1;
+    const d = Number(m[3]);
+    const dt = new Date(y, mo, d);
+    return Number.isNaN(dt.getTime()) ? null : dt;
+};
+
 const dateToWords = (dateString) => {
-    // Try to parse "25th January 2026" or "2026-01-25"
-    // This is a basic converter, assuming user input is somewhat standard or uses the date input
-    if(!dateString) return '';
-    const date = new Date(dateString);
-    if(isNaN(date.getTime())) return dateString; // Return original if parse fails
+    if (!dateString) return '';
+
+    const isoLocal = parseISODateLocal(dateString);
+    const date = isoLocal ?? new Date(dateString);
+    if (Number.isNaN(date.getTime())) return dateString; // Return original if parse fails
 
     const day = date.getDate();
     const year = date.getFullYear();
     const month = date.toLocaleString('default', { month: 'long' });
-    
-    const numToWordMap = ['','First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth','Eleventh','Twelfth','Thirteenth','Fourteenth','Fifteenth','Sixteenth','Seventeenth','Eighteenth','Nineteenth','Twentieth','Twenty First','Twenty Second','Twenty Third','Twenty Fourth','Twenty Fifth','Twenty Sixth','Twenty Seventh','Twenty Eighth','Twenty Ninth','Thirtieth','Thirty First'];
-    const dayWord = numToWordMap[day] || day;
-    
-    // Year to words (Simple approach: Twenty Twenty Six)
-    const y1 = Math.floor(year / 100);
-    const y2 = year % 100;
-    const yearWord = numberToWords(y1).replace(' Only','') + ' ' + numberToWords(y2).replace(' Only','');
 
-    return `${dayWord} of ${month} ${yearWord}`;
+    const ordinalMap = [
+        '',
+        'First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth',
+        'Eleventh','Twelfth','Thirteenth','Fourteenth','Fifteenth','Sixteenth','Seventeenth','Eighteenth','Nineteenth',
+        'Twentieth','Twenty First','Twenty Second','Twenty Third','Twenty Fourth','Twenty Fifth','Twenty Sixth','Twenty Seventh','Twenty Eighth','Twenty Ninth',
+        'Thirtieth','Thirty First'
+    ];
+    const dayWord = ordinalMap[day] || `${day}`;
+    const yearWord = yearToWords(year);
+
+    return `${dayWord} of ${month} ${yearWord}`.trim();
 };
 
 const MOUEditor = () => {
@@ -90,9 +133,23 @@ const MOUEditor = () => {
             agreementSaleAmount: '', 
             agreementSaleDateText: '',
             balanceAmount: '', 
-            cancellationCharge: '5,00,000'
+            cancellationCharge: '5,00,000',
+            tdsPercent: '1'
         }
     });
+
+    const pluralize = (count, singular, plural) => (count === 1 ? singular : plural);
+    const verb = (count, singularVerb, pluralVerb) => (count === 1 ? singularVerb : pluralVerb);
+    const sellersCount = formData.sellers.length;
+    const buyersCount = formData.buyers.length;
+
+    const vendorLabel = pluralize(sellersCount, 'Vendor', 'Vendors');
+    const purchaserLabel = pluralize(buyersCount, 'Purchaser', 'Purchasers');
+    const firstPartyLabel = pluralize(sellersCount, 'First Party/Vendor', 'First Parties/Vendors');
+    const secondPartyLabel = pluralize(buyersCount, 'Second Party/Purchaser', 'Second Parties/Purchasers');
+    const firstPartyShort = pluralize(sellersCount, 'First Party', 'First Parties');
+    const secondPartyShort = pluralize(buyersCount, 'Second Party', 'Second Parties');
+    const tdsRate = String(formData.financials.tdsPercent ?? '1').replace(/%/g, '').trim() || '1';
 
     const toggleSection = (section) => {
         setExpandedSection(expandedSection === section ? null : section);
@@ -264,8 +321,11 @@ const MOUEditor = () => {
                     {expandedSection === 'general' && (
                         <div className="accordion-content" style={{ padding: '1.5rem', background: 'white' }}>
                             <div className="input-group">
-                                <label className="input-label">test Agreement Date</label>
-                                <input className="input-field" placeholder="e.g. 25th January 2026" value={formData.agreementDate} onChange={(e) => handleChange('root', 'agreementDate', e.target.value)} />
+                                <label className="input-label">Agreement Date</label>
+                                <input className="input-field" type="date" value={formData.agreementDate} onChange={(e) => handleChange('root', 'agreementDate', e.target.value)} />
+                                <div style={{ marginTop: '6px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                                    {dateToWords(formData.agreementDate)}
+                                </div>
                             </div>
                             <div className="input-group">
                                 <label className="input-label">Place of Execution</label>
@@ -289,12 +349,7 @@ const MOUEditor = () => {
                                     </button>
                                     
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '10px' }}>
-                                        <select className="input-field" value={seller.title} onChange={(e) => handleChange('sellers', 'title', e.target.value, i)}>
-                                            <option value="Mr.">Mr.</option>
-                                            <option value="Ms.">Ms.</option>
-                                            <option value="Mrs.">Mrs.</option>
-                                            <option value="M/s.">M/s.</option>
-                                        </select>
+                                        <input className="input-field" placeholder="Mr./Mrs." value={seller.title} onChange={(e) => handleChange('sellers', 'title', e.target.value, i)} />
                                         <input className="input-field" placeholder="Full Name" value={seller.name} onChange={(e) => handleChange('sellers', 'name', e.target.value, i)} />
                                     </div>
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: '10px' }}>
@@ -328,12 +383,7 @@ const MOUEditor = () => {
                                     </button>
                                     
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '10px' }}>
-                                        <select className="input-field" value={buyer.title} onChange={(e) => handleChange('buyers', 'title', e.target.value, i)}>
-                                            <option value="Mr.">Mr.</option>
-                                            <option value="Ms.">Ms.</option>
-                                            <option value="Mrs.">Mrs.</option>
-                                            <option value="M/s.">M/s.</option>
-                                        </select>
+                                        <input className="input-field" placeholder="Mr./Mrs." value={buyer.title} onChange={(e) => handleChange('buyers', 'title', e.target.value, i)} />
                                         <input className="input-field" placeholder="Full Name" value={buyer.name} onChange={(e) => handleChange('buyers', 'name', e.target.value, i)} />
                                     </div>
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: '10px' }}>
@@ -362,6 +412,22 @@ const MOUEditor = () => {
                             <div className="input-group">
                                 <label className="input-label">Total Consideration (Rs.)</label>
                                 <input className="input-field" placeholder="e.g. 2,27,00,000" value={formData.financials.totalConsideration} onChange={(e) => handleChange('financials', 'totalConsideration', e.target.value)} />
+                                <div style={{ marginTop: '6px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                                    {formData.financials.totalConsideration ? `Rupees ${numberToWords(formData.financials.totalConsideration)}` : ''}
+                                </div>
+                            </div>
+
+                            <div className="input-group">
+                                <label className="input-label">TDS (%)</label>
+                                <input
+                                    className="input-field"
+                                    placeholder="e.g. 1"
+                                    value={formData.financials.tdsPercent}
+                                    onChange={(e) => handleChange('financials', 'tdsPercent', e.target.value)}
+                                />
+                                <div style={{ marginTop: '6px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                                    Used in the document wherever TDS is mentioned (useful for NRI/other cases).
+                                </div>
                             </div>
                             
                             <h4 style={{ fontSize: '0.9rem', margin: '1.5rem 0 0.5rem', color: 'var(--text-muted)' }}>Token Advance 1</h4>
@@ -386,6 +452,9 @@ const MOUEditor = () => {
                             <div className="input-group">
                                 <label className="input-label">At MOU Signing</label>
                                 <input className="input-field" placeholder="Amount" value={formData.financials.signingAmount} onChange={(e) => handleChange('financials', 'signingAmount', e.target.value)} />
+                                <div style={{ marginTop: '6px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                                    {formData.financials.signingAmount ? `Rupees ${numberToWords(formData.financials.signingAmount)}` : ''}
+                                </div>
                             </div>
                             <div className="input-group">
                                 <label className="input-label">At Sale Agreement</label>
@@ -393,14 +462,23 @@ const MOUEditor = () => {
                                     <input className="input-field" placeholder="Amount" value={formData.financials.agreementSaleAmount} onChange={(e) => handleChange('financials', 'agreementSaleAmount', e.target.value)} />
                                     <input className="input-field" placeholder="Date" value={formData.financials.agreementSaleDateText} onChange={(e) => handleChange('financials', 'agreementSaleDateText', e.target.value)} />
                                 </div>
+                                <div style={{ marginTop: '6px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                                    {formData.financials.agreementSaleAmount ? `Rupees ${numberToWords(formData.financials.agreementSaleAmount)}` : ''}
+                                </div>
                             </div>
                             <div className="input-group">
                                 <label className="input-label">Balance at Registration</label>
                                 <input className="input-field" placeholder="Amount" value={formData.financials.balanceAmount} onChange={(e) => handleChange('financials', 'balanceAmount', e.target.value)} />
+                                <div style={{ marginTop: '6px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                                    {formData.financials.balanceAmount ? `Rupees ${numberToWords(formData.financials.balanceAmount)}` : ''}
+                                </div>
                             </div>
                              <div className="input-group">
                                 <label className="input-label">Cancellation Charge</label>
                                 <input className="input-field" value={formData.financials.cancellationCharge} onChange={(e) => handleChange('financials', 'cancellationCharge', e.target.value)} />
+                                <div style={{ marginTop: '6px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                                    {formData.financials.cancellationCharge ? `Rupees ${numberToWords(formData.financials.cancellationCharge)}` : ''}
+                                </div>
                             </div>
                         </div>
                     )}
@@ -492,7 +570,7 @@ const MOUEditor = () => {
                         ))}
 
                         <p>
-                            Hereinafter called the <b>{formData.sellers.length > 1 ? 'First Parties/Vendors' : 'First Party/Vendor'}</b> (which expression wherever it so required shall mean and include all his/her heirs, legal representatives, administrators, executors and assigns etc.) of the One part
+                            Hereinafter called the <b>{firstPartyLabel}</b> (which expression wherever it so required shall mean and include all his/her heirs, legal representatives, administrators, executors and assigns etc.) of the One part
                         </p>
 
                         <div style={{ textAlign: 'center', fontWeight: 'bold', margin: '20px 0' }}>AND</div>
@@ -510,19 +588,19 @@ const MOUEditor = () => {
                         ))}
 
                         <p>
-                            Hereinafter called the <b>{formData.buyers.length > 1 ? 'Second Parties/Purchasers' : 'Second Party/Purchaser'}</b> (which expression wherever it so required shall mean and include all his/her heirs, legal representatives, executors and assigns etc.) of the other part.
+                            Hereinafter called the <b>{secondPartyLabel}</b> (which expression wherever it so required shall mean and include all his/her heirs, legal representatives, executors and assigns etc.) of the other part.
                         </p>
 
                         {/* Clauses */}
                         <ol style={{ paddingLeft: '30px', textAlign: 'justify' }}>
                             <li style={{ marginBottom: '10px' }}>
-                                WHEREAS the Vendors {formData.sellers.length > 1 ? 'are' : 'is'} fully competent to enter into an agreement with respect to {formData.property.scheduleC || '[Property Description]'}
+                                WHEREAS the {vendorLabel} {verb(sellersCount, 'is', 'are')} fully competent to enter into an agreement with respect to {formData.property.scheduleC || '[Property Description]'}
                             </li>
                             <li style={{ marginBottom: '10px' }}>
-                                WHEREAS the Vendors has decided to sell to the Purchasers and Purchasers has agreed to buy the said apartment at a total consideration of Rs. {formData.financials.totalConsideration || '___________'} (Rupees {numberToWords(formData.financials.totalConsideration)}).
+                                WHEREAS the {vendorLabel} {verb(sellersCount, 'has', 'have')} decided to sell to the {purchaserLabel} and the {purchaserLabel} {verb(buyersCount, 'has', 'have')} agreed to buy the said apartment at a total consideration of Rs. {formData.financials.totalConsideration || '___________'} (Rupees {numberToWords(formData.financials.totalConsideration)}).
                             </li>
                             <li style={{ marginBottom: '10px' }}>
-                                WHEREAS the Purchasers agreed to pay the total Consideration to the Vendors, a sum of Rs. {formData.financials.totalConsideration || '___________'} (Rupees {numberToWords(formData.financials.totalConsideration)}).
+                                WHEREAS the {purchaserLabel} {verb(buyersCount, 'has', 'have')} agreed to pay the total consideration to the {vendorLabel}, a sum of Rs. {formData.financials.totalConsideration || '___________'} (Rupees {numberToWords(formData.financials.totalConsideration)}).
                             </li>
                         </ol>
 
@@ -532,25 +610,25 @@ const MOUEditor = () => {
 
                         <ol style={{ paddingLeft: '30px', textAlign: 'justify' }}>
                             <li style={{ marginBottom: '10px' }}>
-                                That the Purchasers have agreed to pay the total consideration of Rs. {formData.financials.totalConsideration} (Rupees {numberToWords(formData.financials.totalConsideration)}), inclusive of 1% TDS on the considered value, in the following manner:
+                                That the {purchaserLabel} {verb(buyersCount, 'has', 'have')} agreed to pay the total consideration of Rs. {formData.financials.totalConsideration} (Rupees {numberToWords(formData.financials.totalConsideration)}), inclusive of {tdsRate}% TDS on the considered value, in the following manner:
                                 <ol type="a" style={{ marginTop: '5px' }}>
-                                    <li style={{marginBottom: '5px'}}>That out of the said total consideration, an amount of Rs. {formData.financials.tokenAdvance1.amount} (Rupees {numberToWords(formData.financials.tokenAdvance1.amount)}) has been paid by the Second Party to the First Party as token advance on {formData.financials.tokenAdvance1.dateText} through {formData.financials.tokenAdvance1.method} with Transaction ID {formData.financials.tokenAdvance1.txnId}.</li>
-                                    <li style={{marginBottom: '5px'}}>That a further amount of Rs. {formData.financials.tokenAdvance2.amount} (Rupees {numberToWords(formData.financials.tokenAdvance2.amount)}) has been paid by the Second Party to the First Party as token advance on {formData.financials.tokenAdvance2.dateText} through {formData.financials.tokenAdvance2.method} with Transaction ID {formData.financials.tokenAdvance2.txnId}.</li>
-                                    <li style={{marginBottom: '5px'}}>That at the time of signing of this Memorandum of Understanding on {dateToWords(formData.agreementDate)} an amount of Rs. {formData.financials.signingAmount} (Rupees {numberToWords(formData.financials.signingAmount)}) will be paid by the Second Party to the First Party.</li>
-                                    <li style={{marginBottom: '5px'}}>That at the time of signing of the Agreement of Sale on or before {formData.financials.agreementSaleDateText} an amount of Rs. {formData.financials.agreementSaleAmount} (Rupees {numberToWords(formData.financials.agreementSaleAmount)}) shall be paid by the Second Party to the First Party.</li>
-                                    <li style={{marginBottom: '5px'}}>That the said balance amount of Rs. {formData.financials.balanceAmount} (Rupees {numberToWords(formData.financials.balanceAmount)}) shall be disbursed by the Second Party to the First Party on the date of Registration of the Sale Deed through Demand Draft.</li>
-                                    <li>That the Second Party shall deduct applicable 1% TDS and shall furnish Form 16B (TDS Certificate) to the First Party as proof of deduction and remittance of the said TDS in accordance with applicable law.</li>
+                                    <li style={{marginBottom: '5px'}}>That out of the said total consideration, an amount of Rs. {formData.financials.tokenAdvance1.amount} (Rupees {numberToWords(formData.financials.tokenAdvance1.amount)}) {verb(buyersCount, 'has', 'have')} been paid by the {secondPartyShort} to the {firstPartyShort} as token advance on {formData.financials.tokenAdvance1.dateText} through {formData.financials.tokenAdvance1.method} with Transaction ID {formData.financials.tokenAdvance1.txnId}.</li>
+                                    <li style={{marginBottom: '5px'}}>That a further amount of Rs. {formData.financials.tokenAdvance2.amount} (Rupees {numberToWords(formData.financials.tokenAdvance2.amount)}) {verb(buyersCount, 'has', 'have')} been paid by the {secondPartyShort} to the {firstPartyShort} as token advance on {formData.financials.tokenAdvance2.dateText} through {formData.financials.tokenAdvance2.method} with Transaction ID {formData.financials.tokenAdvance2.txnId}.</li>
+                                    <li style={{marginBottom: '5px'}}>That at the time of signing of this Memorandum of Understanding on {dateToWords(formData.agreementDate)} an amount of Rs. {formData.financials.signingAmount} (Rupees {numberToWords(formData.financials.signingAmount)}) will be paid by the {secondPartyShort} to the {firstPartyShort}.</li>
+                                    <li style={{marginBottom: '5px'}}>That at the time of signing of the Agreement of Sale on or before {formData.financials.agreementSaleDateText} an amount of Rs. {formData.financials.agreementSaleAmount} (Rupees {numberToWords(formData.financials.agreementSaleAmount)}) shall be paid by the {secondPartyShort} to the {firstPartyShort}.</li>
+                                    <li style={{marginBottom: '5px'}}>That the said balance amount of Rs. {formData.financials.balanceAmount} (Rupees {numberToWords(formData.financials.balanceAmount)}) shall be disbursed by the {secondPartyShort} to the {firstPartyShort} on the date of Registration of the Sale Deed through Demand Draft.</li>
+                                    <li>That the {secondPartyShort} shall deduct applicable {tdsRate}% TDS and shall furnish Form 16B (TDS Certificate) to the {firstPartyShort} as proof of deduction and remittance of the said TDS in accordance with applicable law.</li>
                                 </ol>
                             </li>
                             <li style={{ marginBottom: '10px' }}>
                                 In the event:
                                 <ol type="a" style={{ marginTop: '5px' }}>
-                                    <li style={{marginBottom: '5px'}}>The Second Party backs out after the First Party has made the transfer of amount as per the transaction mentioned in this MOU, the Second Party agrees to pay Rs. {formData.financials.cancellationCharge} (Rupees {numberToWords(formData.financials.cancellationCharge)}) towards back-out / cancellation charges.</li>
-                                    <li>The First Party backs out or withdraws from the transaction after execution of this MOU, the First Party shall pay the Second Party an amount of Rs. {formData.financials.cancellationCharge} (Rupees {numberToWords(formData.financials.cancellationCharge)}) as cancellation charges.</li>
+                                    <li style={{marginBottom: '5px'}}>If the {secondPartyShort} backs out after the {firstPartyShort} {verb(sellersCount, 'has', 'have')} made the transfer of amount as per the transaction mentioned in this MOU, the {secondPartyShort} agrees to pay Rs. {formData.financials.cancellationCharge} (Rupees {numberToWords(formData.financials.cancellationCharge)}) towards back-out / cancellation charges.</li>
+                                    <li>If the {firstPartyShort} backs out or withdraws from the transaction after execution of this MOU, the {firstPartyShort} shall pay the {secondPartyShort} an amount of Rs. {formData.financials.cancellationCharge} (Rupees {numberToWords(formData.financials.cancellationCharge)}) as cancellation charges.</li>
                                 </ol>
                             </li>
                             <li style={{ marginBottom: '10px' }}>
-                                The First Parties confirms that he has not entered into any agreements for sale or transfer and agrees that he will not enter into any Agreements for sale or transfer of the Schedule 'C' Property with anyone in any manner, until this MOU is in force.
+                                The {firstPartyShort} {verb(sellersCount, 'confirms', 'confirm')} that {verb(sellersCount, 'he/she has', 'they have')} not entered into any agreements for sale or transfer and {verb(sellersCount, 'agrees', 'agree')} that {verb(sellersCount, 'he/she will', 'they will')} not enter into any Agreements for sale or transfer of the Schedule 'C' Property with anyone in any manner, until this MOU is in force.
                             </li>
                             <li style={{ marginBottom: '10px' }}>
                                 ARBITRATION: Should any dispute arise between the parties hereto at anytime during the tenure of this MOU, the same shall, as soon as the dispute shall arise, be referred to the sole arbitration of a person to be mutually agreed to by both the parties to this MOU.
@@ -561,7 +639,7 @@ const MOUEditor = () => {
                                 This MOU shall be governed by the laws of India and the courts at Bangalore shall have exclusive jurisdiction in respect of matters under this Agreement.
                             </li>
                             <li>
-                                Both Parties agree that the Transaction shall be deemed completed upon the First Party receiving the full consideration and the Second Party receiving the duly executed Sale Deed. For the purposes of this MOU, the transaction shall be considered complete only upon fulfilment of these conditions.
+                                Both Parties agree that the Transaction shall be deemed completed upon the {firstPartyShort} receiving the full consideration and the {secondPartyShort} receiving the duly executed Sale Deed. For the purposes of this MOU, the transaction shall be considered complete only upon fulfilment of these conditions.
                             </li>
                         </ol>
 
@@ -602,11 +680,11 @@ const MOUEditor = () => {
                             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '40px', minWidth: '200px' }}>
                                 <div>
                                     <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
-                                    <b>(FIRST PARTY)</b>
+                                    <b>({firstPartyShort.toUpperCase()})</b>
                                 </div>
                                 <div>
                                     <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
-                                    <b>(SECOND PARTY)</b>
+                                    <b>({secondPartyShort.toUpperCase()})</b>
                                 </div>
                             </div>
                         </div>
