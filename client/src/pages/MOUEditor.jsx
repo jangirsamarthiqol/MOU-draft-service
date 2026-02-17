@@ -16,6 +16,7 @@ import {
     Building,
     FileType
 } from 'lucide-react';
+import htmlDocx from 'html-docx-js';
 
 import UserDetailsModal from '../components/UserDetailsModal';
 
@@ -367,11 +368,12 @@ const MOUEditor = () => {
 </html>`;
 
         // @ts-ignore
-        if (window.htmlDocx) {
-            const converted = window.htmlDocx.asBlob(html);
+        try {
+            const converted = htmlDocx.asBlob(html);
             saveAs(converted, 'MOU_Draft.docx');
-        } else {
-            alert("DOCX conversion library not loaded.");
+        } catch (error) {
+            console.error("Error generating DOCX:", error);
+            alert("Error generating DOCX file. Please try again.");
         }
         setLoading(false);
     };
