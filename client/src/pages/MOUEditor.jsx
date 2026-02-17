@@ -225,11 +225,19 @@ const MOUEditor = () => {
         }
 
         const element = document.getElementById('mou-preview');
+        if (!element) {
+            console.error('mou-preview element not found');
+            setLoading(false);
+            return;
+        }
         const opt = {
-            margin: [0.5, 0.5, 0.5, 0.5],
+            // IMPORTANT: the preview is already sized for "letter" (8.5in wide).
+            // Non-zero jsPDF margins can cause right-side clipping.
+            margin: 0,
             filename: 'MOU_Draft.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
+            pagebreak: { mode: ['css', 'legacy'] },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
@@ -252,25 +260,36 @@ const MOUEditor = () => {
             console.error("Failed to save user data", err);
         }
 
-        const content = document.getElementById('mou-preview').innerHTML;
-        const html = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <style>
-                    body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; }
-                    p { text-align: justify; }
-                    ol { margin: 0; padding-left: 0; list-style-position: inside; }
-                    ol ol { margin-top: 5px; padding-left: 18px; list-style-position: inside; }
-                    li { margin-left: 0; padding-left: 0; }
-                    .center { text-align: center; }
-                    .bold { font-weight: bold; }
-                    .underline { text-decoration: underline; }
-                </style>
-            </head>
-            <body>${content}</body>
-            </html>
-        `;
+        const previewEl = document.getElementById('mou-preview');
+        if (!previewEl) {
+            console.error('mou-preview element not found');
+            setLoading(false);
+            return;
+        }
+
+        // Use innerHTML (not the fixed-width wrapper) for Word compatibility
+        const content = previewEl.innerHTML;
+        const html = `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @page { size: letter; margin: 1in; }
+      body { font-family: "Times New Roman", serif; font-size: 12pt; line-height: 1.5; }
+      p { text-align: justify; margin: 0 0 10pt 0; }
+      /* Word-friendly list spacing/wrapping */
+      ol { margin: 0 0 10pt 18pt; padding: 0; }
+      ol ol { margin-top: 6pt; }
+      li { margin: 0 0 6pt 0; }
+      .center { text-align: center; }
+      .bold { font-weight: bold; }
+      .underline { text-decoration: underline; }
+    </style>
+  </head>
+  <body>${content}</body>
+</html>`;
 
         // @ts-ignore
         if (window.htmlDocx) {
