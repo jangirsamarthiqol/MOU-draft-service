@@ -260,6 +260,9 @@ const MOUEditor = () => {
                 <style>
                     body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; }
                     p { text-align: justify; }
+                    ol { margin: 0; padding-left: 0; list-style-position: inside; }
+                    ol ol { margin-top: 5px; padding-left: 18px; list-style-position: inside; }
+                    li { margin-left: 0; padding-left: 0; }
                     .center { text-align: center; }
                     .bold { font-weight: bold; }
                     .underline { text-decoration: underline; }
@@ -304,6 +307,21 @@ const MOUEditor = () => {
         if (window.clarity) {
             window.clarity("event", `download_skipped_${downloadType ? downloadType.toLowerCase() : 'unknown'}`);
         }
+    };
+
+    // Inline list styles so PDF/DOCX exports keep alignment
+    const previewOlStyle = {
+        margin: 0,
+        paddingLeft: 0,
+        listStylePosition: 'inside',
+        textAlign: 'justify',
+    };
+
+    const previewNestedOlStyle = {
+        marginTop: '5px',
+        marginLeft: 0,
+        paddingLeft: '18px',
+        listStylePosition: 'inside',
     };
 
 
@@ -638,7 +656,7 @@ const MOUEditor = () => {
                         </p>
 
                         {/* Clauses */}
-                        <ol style={{ paddingLeft: '18px', margin: '0', textAlign: 'justify' }}>
+                        <ol style={previewOlStyle}>
                             <li style={{ marginBottom: '10px' }}>
                                 WHEREAS the {vendorLabel} {verb(sellersCount, 'is', 'are')} fully competent to enter into an agreement with respect to {formData.property.scheduleC || '[Property Description]'}
                             </li>
@@ -654,10 +672,10 @@ const MOUEditor = () => {
                             NOW THIS MOU WITNESSED AND IS HEREBY AGREED BY AND BETWEEN BOTH THE PARTIES HERETO AS FOLLOWS
                         </div>
 
-                        <ol style={{ paddingLeft: '18px', margin: '0', textAlign: 'justify' }}>
+                        <ol style={previewOlStyle}>
                             <li style={{ marginBottom: '10px' }}>
                                 That the {purchaserLabel} {verb(buyersCount, 'has', 'have')} agreed to pay the total consideration of Rs. {formData.financials.totalConsideration} (Rupees {numberToWords(formData.financials.totalConsideration)}), inclusive of {tdsRate}% TDS on the considered value, in the following manner:
-                                <ol type="a" style={{ marginTop: '5px', paddingLeft: '18px', marginLeft: 0 }}>
+                                <ol type="a" style={previewNestedOlStyle}>
                                     <li style={{marginBottom: '5px'}}>That out of the said total consideration, an amount of Rs. {formData.financials.tokenAdvance1.amount} (Rupees {numberToWords(formData.financials.tokenAdvance1.amount)}) {verb(buyersCount, 'has', 'have')} been paid by the {secondPartyShort} to the {firstPartyShort} as token advance on {formData.financials.tokenAdvance1.dateText} through {formData.financials.tokenAdvance1.method} with Transaction ID {formData.financials.tokenAdvance1.txnId}.</li>
                                     <li style={{marginBottom: '5px'}}>That a further amount of Rs. {formData.financials.tokenAdvance2.amount} (Rupees {numberToWords(formData.financials.tokenAdvance2.amount)}) {verb(buyersCount, 'has', 'have')} been paid by the {secondPartyShort} to the {firstPartyShort} as token advance on {formData.financials.tokenAdvance2.dateText} through {formData.financials.tokenAdvance2.method} with Transaction ID {formData.financials.tokenAdvance2.txnId}.</li>
                                     <li style={{marginBottom: '5px'}}>That at the time of signing of this Memorandum of Understanding on {dateToWords(formData.agreementDate)} an amount of Rs. {formData.financials.signingAmount} (Rupees {numberToWords(formData.financials.signingAmount)}) will be paid by the {secondPartyShort} to the {firstPartyShort}.</li>
@@ -668,7 +686,7 @@ const MOUEditor = () => {
                             </li>
                             <li style={{ marginBottom: '10px' }}>
                                 In the event:
-                                <ol type="a" style={{ marginTop: '5px', paddingLeft: '18px', marginLeft: 0 }}>
+                                <ol type="a" style={previewNestedOlStyle}>
                                     <li style={{marginBottom: '5px'}}>If the {secondPartyShort} backs out after the {firstPartyShort} {verb(sellersCount, 'has', 'have')} made the transfer of amount as per the transaction mentioned in this MOU, the {secondPartyShort} agrees to pay Rs. {formData.financials.cancellationCharge} (Rupees {numberToWords(formData.financials.cancellationCharge)}) towards back-out / cancellation charges.</li>
                                     <li>If the {firstPartyShort} backs out or withdraws from the transaction after execution of this MOU, the {firstPartyShort} shall pay the {secondPartyShort} an amount of Rs. {formData.financials.cancellationCharge} (Rupees {numberToWords(formData.financials.cancellationCharge)}) as cancellation charges.</li>
                                 </ol>
