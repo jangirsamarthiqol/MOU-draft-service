@@ -376,8 +376,12 @@ const MOUEditor = () => {
                                         <Trash2 size={14} />
                                     </button>
                                     
-                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '10px' }}>
-                                        <input className="input-field" placeholder="Mr./Mrs./Ms" value={seller.title} onChange={(e) => handleTitleChange('sellers', i, e.target.value)} />
+                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '10px' }}>
+                                        <select className="input-field" value={seller.title} onChange={(e) => handleTitleChange('sellers', i, e.target.value)}>
+                                            <option value="Mr.">Mr.</option>
+                                            <option value="Mrs.">Mrs.</option>
+                                            <option value="Ms.">Ms.</option>
+                                        </select>
                                         <input className="input-field" placeholder="Full Name" value={seller.name} onChange={(e) => handleChange('sellers', 'name', e.target.value, i)} />
                                     </div>
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 100px', gap: '10px' }}>
@@ -415,8 +419,12 @@ const MOUEditor = () => {
                                         <Trash2 size={14} />
                                     </button>
                                     
-                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '10px' }}>
-                                        <input className="input-field" placeholder="Mr./Mrs./Ms" value={buyer.title} onChange={(e) => handleTitleChange('buyers', i, e.target.value)} />
+                                    <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '10px' }}>
+                                        <select className="input-field" value={buyer.title} onChange={(e) => handleTitleChange('buyers', i, e.target.value)}>
+                                            <option value="Mr.">Mr.</option>
+                                            <option value="Mrs.">Mrs.</option>
+                                            <option value="Ms.">Ms.</option>
+                                        </select>
                                         <input className="input-field" placeholder="Full Name" value={buyer.name} onChange={(e) => handleChange('buyers', 'name', e.target.value, i)} />
                                     </div>
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 100px', gap: '10px' }}>
