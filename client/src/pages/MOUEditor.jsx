@@ -827,26 +827,46 @@ const MOUEditor = () => {
                         </p>
 
                         {/* Signatures */}
-                        <div className="signatures-section" style={{ marginTop: '50px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '40px' }}>
-                            <div style={{ flex: 1, minWidth: '200px' }}>
-                                <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>WITNESSES:</div>
-                                <div style={{ marginBottom: '40px' }}>
-                                    1. ____________________________<br/>
-                                    (Name & Address)
-                                </div>
-                                <div>
-                                    2. ____________________________<br/>
-                                    (Name & Address)
+                        <div className="signatures-section" style={{ marginTop: '50px' }}>
+                            {/* First Party Section */}
+                            <div style={{ marginBottom: '40px' }}>
+                                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '40px', marginBottom: '15px' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>WITNESSES:</div>
+                                        <div style={{ marginBottom: '10px' }}>
+                                            1. ____________________________<br/>
+                                            (Name & Address)
+                                        </div>
+                                        <div>
+                                            2. ____________________________<br/>
+                                            (Name & Address)
+                                        </div>
+                                    </div>
+                                    <div style={{ minWidth: '200px' }}>
+                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
+                                        <b>({firstPartyShort.toUpperCase()})</b>
+                                    </div>
                                 </div>
                             </div>
-                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '40px', minWidth: '200px' }}>
-                                <div>
-                                    <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
-                                    <b>({firstPartyShort.toUpperCase()})</b>
-                                </div>
-                                <div>
-                                    <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
-                                    <b>({secondPartyShort.toUpperCase()})</b>
+
+                            {/* Second Party Section */}
+                            <div>
+                                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '40px', marginBottom: '15px' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>WITNESSES:</div>
+                                        <div style={{ marginBottom: '10px' }}>
+                                            1. ____________________________<br/>
+                                            (Name & Address)
+                                        </div>
+                                        <div>
+                                            2. ____________________________<br/>
+                                            (Name & Address)
+                                        </div>
+                                    </div>
+                                    <div style={{ minWidth: '200px' }}>
+                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
+                                        <b>({secondPartyShort.toUpperCase()})</b>
+                                    </div>
                                 </div>
                             </div>
                         </div>
