@@ -244,7 +244,7 @@ const MOUEditor = () => {
         const clone = element.cloneNode(true);
         // Ensure clone has predictable dimensions & wrapping
         clone.style.width = '7.5in'; // letter 8.5in - 1in total horizontal margins (0.5in each side)
-        clone.style.minHeight = '10in';
+        clone.style.minHeight = '11in';
         clone.style.padding = '0.5in';
         clone.style.boxSizing = 'border-box';
         clone.style.margin = '0';
