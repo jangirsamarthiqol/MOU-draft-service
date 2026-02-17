@@ -251,6 +251,39 @@ const MOUEditor = () => {
         clone.style.overflow = 'visible';
         clone.style.wordBreak = 'break-word';
         clone.style.overflowWrap = 'anywhere';
+        clone.style.textAlign = 'justify'; // Ensure all text is justified
+        clone.style.fontFamily = '"Times New Roman", serif'; // Use consistent font
+        clone.style.fontSize = '12pt';
+        clone.style.lineHeight = '1.5';
+        
+        // Fix all paragraphs and divs inside the clone to have proper text alignment
+        const allParagraphs = clone.querySelectorAll('p, div');
+        allParagraphs.forEach(el => {
+            if (!el.style.textAlign || el.style.textAlign === 'left') {
+                el.style.textAlign = 'justify';
+            }
+            // Ensure no elements are cut off
+            el.style.overflow = 'visible';
+            el.style.wordBreak = 'break-word';
+            el.style.overflowWrap = 'anywhere';
+        });
+        
+        // Fix list styling
+        const allLists = clone.querySelectorAll('ol, ul');
+        allLists.forEach(el => {
+            el.style.textAlign = 'justify';
+            el.style.marginLeft = '0';
+            el.style.paddingLeft = '20px';
+        });
+        
+        // Fix list items
+        const allListItems = clone.querySelectorAll('li');
+        allListItems.forEach(el => {
+            el.style.textAlign = 'justify';
+            el.style.marginBottom = '6pt';
+            el.style.overflow = 'visible';
+            el.style.wordBreak = 'break-word';
+        });
 
         printHost.appendChild(clone);
         document.body.appendChild(printHost);
@@ -259,7 +292,15 @@ const MOUEditor = () => {
             margin: [0.5, 0.5, 0.5, 0.5],
             filename: 'MOU_Draft.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                letterRendering: true,
+                width: clone.offsetWidth,
+                height: clone.offsetHeight,
+                scrollX: 0,
+                scrollY: 0
+            },
             pagebreak: { mode: ['css', 'legacy'] },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
@@ -660,6 +701,10 @@ const MOUEditor = () => {
                         fontFamily: '"Times New Roman", serif', 
                         fontSize: '12pt', 
                         lineHeight: '1.6',
+                        textAlign: 'justify',
+                        wordBreak: 'break-word',
+                        overflowWrap: 'anywhere',
+                        overflow: 'visible',
                         boxShadow: 'var(--shadow-lg)',
                         marginBottom: '2rem'
                     }}>
@@ -668,7 +713,7 @@ const MOUEditor = () => {
                             <div style={{ textDecoration: 'underline', fontSize: '14pt' }}>MEMORANDUM OF UNDERSTANDING</div>
                         </div>
 
-                        <p style={{ textAlign: 'justify' }}>
+                        <p style={{ textAlign: 'justify', margin: '0 0 10pt 0' }}>
                             THIS MEMORANDUM OF UNDERSTANDING IS MADE AND EXECUTED ON THIS {dateToWords(formData.agreementDate).toUpperCase()}
                         </p>
 
@@ -686,7 +731,7 @@ const MOUEditor = () => {
                             </div>
                         ))}
 
-                        <p>
+                        <p style={{ textAlign: 'justify', margin: '0 0 10pt 0' }}>
                             Hereinafter called the <b>{firstPartyLabel}</b> (which expression wherever it so required shall mean and include all his/her heirs, legal representatives, administrators, executors and assigns etc.) of the One part
                         </p>
 
@@ -704,7 +749,7 @@ const MOUEditor = () => {
                             </div>
                         ))}
 
-                        <p>
+                        <p style={{ textAlign: 'justify', margin: '0 0 10pt 0' }}>
                             Hereinafter called the <b>{secondPartyLabel}</b> (which expression wherever it so required shall mean and include all his/her heirs, legal representatives, executors and assigns etc.) of the other part.
                         </p>
 

@@ -167,16 +167,36 @@ select.input-field {
   margin: 0 !important;
   padding-left: 0 !important;
   list-style-position: inside;
+  text-align: justify !important;
 }
 
 .preview-document ol ol {
   margin-top: 0.25rem !important;
   padding-left: 1rem !important; /* keep a small nested indent */
+  text-align: justify !important;
 }
 
 .preview-document li {
   margin-left: 0 !important;
   padding-left: 0 !important;
+  text-align: justify !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  overflow: visible !important;
+}
+
+.preview-document p {
+  text-align: justify !important;
+  margin: 0 0 10pt 0 !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  overflow: visible !important;
+}
+
+.preview-document div {
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  overflow: visible !important;
 }
 
 .input-field:focus {
