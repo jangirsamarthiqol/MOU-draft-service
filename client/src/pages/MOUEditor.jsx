@@ -16,7 +16,7 @@ import {
     Building,
     FileType
 } from 'lucide-react';
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
+import html2docx from 'html2docx';
 
 import UserDetailsModal from '../components/UserDetailsModal';
 
@@ -343,39 +343,15 @@ const MOUEditor = () => {
             return;
         }
 
-        // Extract text content from preview element
-        const content = previewEl.innerText || previewEl.textContent || '';
-        
-        console.log('Extracted content:', content.substring(0, 200) + '...');
+        // Get the full HTML content
+        const content = previewEl.innerHTML;
+        console.log('Content length:', content.length);
         
         try {
-            // Create a simple DOCX document with the content
-            const doc = new Document({
-                sections: [{
-                    properties: {},
-                    children: [
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: content,
-                                    font: "Times New Roman",
-                                    size: 24,
-                                })
-                            ],
-                            alignment: AlignmentType.JUSTIFIED,
-                            spacing: {
-                                after: 200,
-                            },
-                        })
-                    ],
-                }],
-            });
-
-            // Generate and save the document
-            Packer.toBlob(doc).then(blob => {
-                saveAs(blob, 'MOU_Draft.docx');
-                console.log('DOCX generated successfully');
-            });
+            // Convert HTML directly to DOCX
+            const converted = html2docx(content);
+            saveAs(converted, 'MOU_Draft.docx');
+            console.log('DOCX generated successfully');
         } catch (error) {
             console.error("Error generating DOCX:", error);
             alert("Error generating DOCX file. Please try again.");
