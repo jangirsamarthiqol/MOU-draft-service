@@ -16,7 +16,7 @@ import {
     Building,
     FileType
 } from 'lucide-react';
-import htmlDocx from 'html-docx-js';
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
 
 import UserDetailsModal from '../components/UserDetailsModal';
 
@@ -343,34 +343,39 @@ const MOUEditor = () => {
             return;
         }
 
-        // Use innerHTML (not the fixed-width wrapper) for Word compatibility
-        const content = previewEl.innerHTML;
-        const html = `<!DOCTYPE html>
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:w="urn:schemas-microsoft-com:office:word"
-      xmlns="http://www.w3.org/TR/REC-html40">
-  <head>
-    <meta charset="utf-8" />
-    <style>
-      @page { size: letter; margin: 1in; }
-      body { font-family: "Times New Roman", serif; font-size: 12pt; line-height: 1.5; }
-      p { text-align: justify; margin: 0 0 10pt 0; }
-      /* Word-friendly list spacing/wrapping */
-      ol { margin: 0 0 10pt 18pt; padding: 0; }
-      ol ol { margin-top: 6pt; }
-      li { margin: 0 0 6pt 0; }
-      .center { text-align: center; }
-      .bold { font-weight: bold; }
-      .underline { text-decoration: underline; }
-    </style>
-  </head>
-  <body>${content}</body>
-</html>`;
-
-        // @ts-ignore
+        // Extract text content from preview element
+        const content = previewEl.innerText || previewEl.textContent || '';
+        
+        console.log('Extracted content:', content.substring(0, 200) + '...');
+        
         try {
-            const converted = htmlDocx.asBlob(html);
-            saveAs(converted, 'MOU_Draft.docx');
+            // Create a simple DOCX document with the content
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: content,
+                                    font: "Times New Roman",
+                                    size: 24,
+                                })
+                            ],
+                            alignment: AlignmentType.JUSTIFIED,
+                            spacing: {
+                                after: 200,
+                            },
+                        })
+                    ],
+                }],
+            });
+
+            // Generate and save the document
+            Packer.toBlob(doc).then(blob => {
+                saveAs(blob, 'MOU_Draft.docx');
+                console.log('DOCX generated successfully');
+            });
         } catch (error) {
             console.error("Error generating DOCX:", error);
             alert("Error generating DOCX file. Please try again.");
