@@ -230,18 +230,52 @@ const MOUEditor = () => {
             setLoading(false);
             return;
         }
+
+        // Export from a print-clone sized to the PDF usable width.
+        // This prevents right-edge clipping when html2pdf rasterizes the DOM.
+        const printHost = document.createElement('div');
+        printHost.style.position = 'fixed';
+        printHost.style.left = '-10000px';
+        printHost.style.top = '0';
+        printHost.style.background = 'white';
+        printHost.style.zIndex = '-1';
+
+        const clone = element.cloneNode(true);
+        // Ensure clone has predictable dimensions & wrapping
+        clone.style.width = '7.5in'; // letter 8.5in - 1in total horizontal margins (0.5in each side)
+        clone.style.minHeight = '10in';
+        clone.style.padding = '0.5in';
+        clone.style.boxSizing = 'border-box';
+        clone.style.margin = '0';
+        clone.style.boxShadow = 'none';
+        clone.style.overflow = 'visible';
+        clone.style.wordBreak = 'break-word';
+        clone.style.overflowWrap = 'anywhere';
+
+        printHost.appendChild(clone);
+        document.body.appendChild(printHost);
+
         const opt = {
-            // IMPORTANT: the preview is already sized for "letter" (8.5in wide).
-            // Non-zero jsPDF margins can cause right-side clipping.
-            margin: 0,
+            margin: [0.5, 0.5, 0.5, 0.5],
             filename: 'MOU_Draft.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
             pagebreak: { mode: ['css', 'legacy'] },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
-        html2pdf().set(opt).from(element).save().then(() => setLoading(false));
+        html2pdf()
+            .set(opt)
+            .from(clone)
+            .save()
+            .then(() => setLoading(false))
+            .finally(() => {
+                try {
+                    document.body.removeChild(printHost);
+                } catch {
+                    // ignore
+                }
+            });
     };
 
     const downloadDOCX = async (userName, userPhone) => {
