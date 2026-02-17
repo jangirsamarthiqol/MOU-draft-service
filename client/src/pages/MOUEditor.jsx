@@ -830,7 +830,7 @@ const MOUEditor = () => {
                         <div className="signatures-section" style={{ marginTop: '50px' }}>
                             {/* First Party Section */}
                             <div style={{ marginBottom: '40px' }}>
-                                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '40px', marginBottom: '15px' }}>
+                                <div style={{ display: 'flex', gap: '40px', marginBottom: '15px' }}>
                                     <div style={{ flex: 1 }}>
                                         <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>WITNESSES:</div>
                                         <div style={{ marginBottom: '10px' }}>
@@ -842,7 +842,7 @@ const MOUEditor = () => {
                                             (Name & Address)
                                         </div>
                                     </div>
-                                    <div style={{ minWidth: '200px' }}>
+                                    <div style={{ minWidth: '200px', paddingTop: '40px' }}>
                                         <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
                                         <b>({firstPartyShort.toUpperCase()})</b>
                                     </div>
@@ -851,7 +851,7 @@ const MOUEditor = () => {
 
                             {/* Second Party Section */}
                             <div>
-                                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '40px', marginBottom: '15px' }}>
+                                <div style={{ display: 'flex', gap: '40px', marginBottom: '15px' }}>
                                     <div style={{ flex: 1 }}>
                                         <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>WITNESSES:</div>
                                         <div style={{ marginBottom: '10px' }}>
@@ -863,7 +863,7 @@ const MOUEditor = () => {
                                             (Name & Address)
                                         </div>
                                     </div>
-                                    <div style={{ minWidth: '200px' }}>
+                                    <div style={{ minWidth: '200px', paddingTop: '40px' }}>
                                         <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
                                         <b>({secondPartyShort.toUpperCase()})</b>
                                     </div>
