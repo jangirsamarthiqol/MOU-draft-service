@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import html2pdf from 'html2pdf.js';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
-import { 
-    Download, 
-    FileText, 
-    Users, 
-    UserPlus, 
-    Trash2, 
-    ChevronDown, 
-    ChevronUp, 
-    CreditCard, 
+import {
+    Download,
+    FileText,
+    Users,
+    UserPlus,
+    Trash2,
+    ChevronDown,
+    ChevronUp,
+    CreditCard,
     Calendar,
     MapPin,
     Building,
@@ -22,22 +22,22 @@ import UserDetailsModal from '../components/UserDetailsModal';
 
 const numberToWords = (num) => {
     if (!num) return '';
-    const a = ['','One ','Two ','Three ','Four ','Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
-    const b = ['', '', 'Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
-    
+    const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
     const unformattedNum = num.toString().replace(/,/g, '');
     if (isNaN(unformattedNum)) return num;
-    
+
     const n = ('000000000' + unformattedNum).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
     if (!n) return '';
-    
+
     let str = '';
     str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
     str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
     str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
     str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
     str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
-    
+
     return str.trim() + ' Only';
 };
 
@@ -109,10 +109,10 @@ const dateToWords = (dateString) => {
 
     const ordinalMap = [
         '',
-        'First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth',
-        'Eleventh','Twelfth','Thirteenth','Fourteenth','Fifteenth','Sixteenth','Seventeenth','Eighteenth','Nineteenth',
-        'Twentieth','Twenty First','Twenty Second','Twenty Third','Twenty Fourth','Twenty Fifth','Twenty Sixth','Twenty Seventh','Twenty Eighth','Twenty Ninth',
-        'Thirtieth','Thirty First'
+        'First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth',
+        'Eleventh', 'Twelfth', 'Thirteenth', 'Fourteenth', 'Fifteenth', 'Sixteenth', 'Seventeenth', 'Eighteenth', 'Nineteenth',
+        'Twentieth', 'Twenty First', 'Twenty Second', 'Twenty Third', 'Twenty Fourth', 'Twenty Fifth', 'Twenty Sixth', 'Twenty Seventh', 'Twenty Eighth', 'Twenty Ninth',
+        'Thirtieth', 'Thirty First'
     ];
     const dayWord = ordinalMap[day] || `${day}`;
     const yearWord = yearToWords(year);
@@ -144,10 +144,10 @@ const MOUEditor = () => {
             totalConsideration: '',
             tokenAdvance1: { amount: '', date: '', dateText: '', method: 'UPI', txnId: '' },
             tokenAdvance2: { amount: '', date: '', dateText: '', method: 'Bank Transfer', txnId: '' },
-            signingAmount: '', 
-            agreementSaleAmount: '', 
+            signingAmount: '',
+            agreementSaleAmount: '',
             agreementSaleDateText: '',
-            balanceAmount: '', 
+            balanceAmount: '',
             cancellationCharge: '5,00,000',
             tdsPercent: '1'
         }
@@ -256,7 +256,7 @@ const MOUEditor = () => {
         clone.style.fontFamily = '"Times New Roman", serif'; // Use consistent font
         clone.style.fontSize = '12pt';
         clone.style.lineHeight = '1.5';
-        
+
         // Fix all paragraphs and divs inside the clone to have proper text alignment
         const allParagraphs = clone.querySelectorAll('p, div');
         allParagraphs.forEach(el => {
@@ -268,7 +268,7 @@ const MOUEditor = () => {
             el.style.wordBreak = 'break-word';
             el.style.overflowWrap = 'anywhere';
         });
-        
+
         // Fix list styling
         const allLists = clone.querySelectorAll('ol, ul');
         allLists.forEach(el => {
@@ -276,7 +276,7 @@ const MOUEditor = () => {
             el.style.marginLeft = '0';
             el.style.paddingLeft = '20px';
         });
-        
+
         // Fix list items
         const allListItems = clone.querySelectorAll('li');
         allListItems.forEach(el => {
@@ -293,9 +293,9 @@ const MOUEditor = () => {
             margin: [0.5, 0.5, 0.5, 0.5],
             filename: 'MOU_Draft.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
                 letterRendering: true,
                 width: clone.offsetWidth,
                 height: clone.offsetHeight,
@@ -346,7 +346,7 @@ const MOUEditor = () => {
         // Get the full HTML content
         const content = previewEl.innerHTML;
         console.log('Content length:', content.length);
-        
+
         try {
             // Wrap HTML in Word-compatible markup
             const docContent = `
@@ -411,11 +411,11 @@ const MOUEditor = () => {
 
 
     const AccordionHeader = ({ title, icon: Icon, section }) => (
-        <div 
+        <div
             onClick={() => toggleSection(section)}
-            style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+            style={{
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '1rem',
                 cursor: 'pointer',
@@ -478,7 +478,7 @@ const MOUEditor = () => {
                                     <button onClick={() => removeParty('sellers', i)} className="btn-icon" style={{ position: 'absolute', top: '10px', right: '10px', color: '#ef4444', background: '#fee2e2' }}>
                                         <Trash2 size={14} />
                                     </button>
-                                    
+
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '10px' }}>
                                         <select className="input-field" value={seller.title} onChange={(e) => handleTitleChange('sellers', i, e.target.value)}>
                                             <option value="Mr.">Mr.</option>
@@ -521,7 +521,7 @@ const MOUEditor = () => {
                                     <button onClick={() => removeParty('buyers', i)} className="btn-icon" style={{ position: 'absolute', top: '10px', right: '10px', color: '#ef4444', background: '#fee2e2' }}>
                                         <Trash2 size={14} />
                                     </button>
-                                    
+
                                     <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '10px' }}>
                                         <select className="input-field" value={buyer.title} onChange={(e) => handleTitleChange('buyers', i, e.target.value)}>
                                             <option value="Mr.">Mr.</option>
@@ -578,7 +578,7 @@ const MOUEditor = () => {
                                     Used in the document wherever TDS is mentioned (useful for NRI/other cases).
                                 </div>
                             </div>
-                            
+
                             <h4 style={{ fontSize: '0.9rem', margin: '1.5rem 0 0.5rem', color: 'var(--text-muted)' }}>Token Advance 1</h4>
                             <div className="input-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                                 <input className="input-field" placeholder="Amount" value={formData.financials.tokenAdvance1.amount} onChange={(e) => handleChange('financials', 'tokenAdvance1', e.target.value, null, 'amount')} />
@@ -622,7 +622,7 @@ const MOUEditor = () => {
                                     {formData.financials.balanceAmount ? `Rupees ${numberToWords(formData.financials.balanceAmount)}` : ''}
                                 </div>
                             </div>
-                             <div className="input-group">
+                            <div className="input-group">
                                 <label className="input-label">Cancellation Charge</label>
                                 <input className="input-field" value={formData.financials.cancellationCharge} onChange={(e) => handleChange('financials', 'cancellationCharge', e.target.value)} />
                                 <div style={{ marginTop: '6px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
@@ -650,7 +650,7 @@ const MOUEditor = () => {
                             </div>
                         </div>
                     )}
-                    
+
                     <div style={{ height: '50px' }}></div>
                 </div>
             </div>
@@ -658,14 +658,14 @@ const MOUEditor = () => {
             {/* Right: Preview & Action */}
             <div className={`editor-preview ${mobileView !== 'preview' ? 'hidden-mobile' : ''}`}>
                 {/* Top Action Bar */}
-                <div className="preview-action-bar" style={{ 
-                    padding: '1rem 2rem', 
-                    background: 'white', 
-                    boxShadow: 'var(--shadow-sm)', 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
+                <div className="preview-action-bar" style={{
+                    padding: '1rem 2rem',
+                    background: 'white',
+                    boxShadow: 'var(--shadow-sm)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    borderBottom: '1px solid var(--border-light)' 
+                    borderBottom: '1px solid var(--border-light)'
                 }}>
                     <div>
                         <h3 style={{ margin: 0 }}>Document Preview</h3>
@@ -673,24 +673,24 @@ const MOUEditor = () => {
                     </div>
                     <div style={{ display: 'flex', gap: '1rem' }}>
                         <button onClick={() => handleDownloadRequest('DOCX')} disabled={loading} className="btn btn-secondary">
-                           <FileType size={18} /> {loading ? 'Processing...' : 'Export DOCX'}
+                            <FileType size={18} /> {loading ? 'Processing...' : 'Export DOCX'}
                         </button>
                         <button onClick={() => handleDownloadRequest('PDF')} disabled={loading} className="btn btn-primary">
                             <Download size={18} /> {loading ? 'Processing...' : 'Export PDF'}
                         </button>
                     </div>
                 </div>
-                
+
                 {/* Preview Area */}
                 <div className="preview-container" style={{ flex: 1, overflowY: 'auto', padding: '2rem', display: 'flex', justifyContent: 'center' }}>
-                    <div id="mou-preview" className="preview-document" style={{ 
-                        background: 'white', 
-                        width: '8.5in', 
-                        minHeight: '11in', 
-                        padding: '1in', 
-                        color: 'black', 
-                        fontFamily: '"Times New Roman", serif', 
-                        fontSize: '12pt', 
+                    <div id="mou-preview" className="preview-document" style={{
+                        background: 'white',
+                        width: '8.5in',
+                        minHeight: '11in',
+                        padding: '1in',
+                        color: 'black',
+                        fontFamily: '"Times New Roman", serif',
+                        fontSize: '12pt',
                         lineHeight: '1.6',
                         textAlign: 'justify',
                         wordBreak: 'break-word',
@@ -699,7 +699,7 @@ const MOUEditor = () => {
                         boxShadow: 'var(--shadow-lg)',
                         marginBottom: '2rem'
                     }}>
-                        
+
                         <div style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '25px' }}>
                             <div style={{ textDecoration: 'underline', fontSize: '14pt' }}>MEMORANDUM OF UNDERSTANDING</div>
                         </div>
@@ -713,11 +713,11 @@ const MOUEditor = () => {
                         {/* Sellers */}
                         {formData.sellers.map((p, i) => (
                             <div key={i} style={{ marginBottom: '15px' }}>
-                                <b>{i+1}) {p.title} {p.name || '[Seller Name]'},</b><br/>
-                                {(p.relationPrefix || 'S/o')} {p.fatherName || '[Father/Mother/Spouse Name]'},<br/>
-                                Aged about {p.age || '[Age]'} years,<br/>
-                                Residing at: {p.address || '[Address]'}<br/>
-                                Aadhar No: {p.aadhar || '[Aadhar]'}<br/>
+                                <b>{i + 1}) {p.title} {p.name || '[Seller Name]'},</b><br />
+                                {(p.relationPrefix || 'S/o')} {p.fatherName || '[Father/Mother/Spouse Name]'},<br />
+                                Aged about {p.age || '[Age]'} years,<br />
+                                Residing at: {p.address || '[Address]'}<br />
+                                Aadhar No: {p.aadhar || '[Aadhar]'}<br />
                                 PAN No: {p.pan || '[PAN]'}
                             </div>
                         ))}
@@ -731,11 +731,11 @@ const MOUEditor = () => {
                         {/* Buyers */}
                         {formData.buyers.map((p, i) => (
                             <div key={i} style={{ marginBottom: '15px' }}>
-                                <b>{i+1}) {p.title} {p.name || '[Buyer Name]'},</b><br/>
-                                {(p.relationPrefix || 'S/o')} {p.fatherName || '[Father/Mother/Spouse Name]'},<br/>
-                                Aged about {p.age || '[Age]'} years,<br/>
-                                Residing at: {p.address || '[Address]'}<br/>
-                                Aadhar No: {p.aadhar || '[Aadhar]'}<br/>
+                                <b>{i + 1}) {p.title} {p.name || '[Buyer Name]'},</b><br />
+                                {(p.relationPrefix || 'S/o')} {p.fatherName || '[Father/Mother/Spouse Name]'},<br />
+                                Aged about {p.age || '[Age]'} years,<br />
+                                Residing at: {p.address || '[Address]'}<br />
+                                Aadhar No: {p.aadhar || '[Aadhar]'}<br />
                                 PAN No: {p.pan || '[PAN]'}
                             </div>
                         ))}
@@ -765,18 +765,18 @@ const MOUEditor = () => {
                             <li style={{ marginBottom: '10px' }}>
                                 That the {purchaserLabel} {verb(buyersCount, 'has', 'have')} agreed to pay the total consideration of Rs. {formData.financials.totalConsideration} (Rupees {numberToWords(formData.financials.totalConsideration)}), inclusive of {tdsRate}% TDS on the considered value, in the following manner:
                                 <ol type="a" style={previewNestedOlStyle}>
-                                    <li style={{marginBottom: '5px'}}>That out of the said total consideration, an amount of Rs. {formData.financials.tokenAdvance1.amount} (Rupees {numberToWords(formData.financials.tokenAdvance1.amount)}) {verb(buyersCount, 'has', 'have')} been paid by the {secondPartyShort} to the {firstPartyShort} as token advance on {formData.financials.tokenAdvance1.dateText} through {formData.financials.tokenAdvance1.method} with Transaction ID {formData.financials.tokenAdvance1.txnId}.</li>
-                                    <li style={{marginBottom: '5px'}}>That a further amount of Rs. {formData.financials.tokenAdvance2.amount} (Rupees {numberToWords(formData.financials.tokenAdvance2.amount)}) {verb(buyersCount, 'has', 'have')} been paid by the {secondPartyShort} to the {firstPartyShort} as token advance on {formData.financials.tokenAdvance2.dateText} through {formData.financials.tokenAdvance2.method} with Transaction ID {formData.financials.tokenAdvance2.txnId}.</li>
-                                    <li style={{marginBottom: '5px'}}>That at the time of signing of this Memorandum of Understanding on {dateToWords(formData.agreementDate)} an amount of Rs. {formData.financials.signingAmount} (Rupees {numberToWords(formData.financials.signingAmount)}) will be paid by the {secondPartyShort} to the {firstPartyShort}.</li>
-                                    <li style={{marginBottom: '5px'}}>That at the time of signing of the Agreement of Sale on or before {formData.financials.agreementSaleDateText} an amount of Rs. {formData.financials.agreementSaleAmount} (Rupees {numberToWords(formData.financials.agreementSaleAmount)}) shall be paid by the {secondPartyShort} to the {firstPartyShort}.</li>
-                                    <li style={{marginBottom: '5px'}}>That the said balance amount of Rs. {formData.financials.balanceAmount} (Rupees {numberToWords(formData.financials.balanceAmount)}) shall be disbursed by the {secondPartyShort} to the {firstPartyShort} on the date of Registration of the Sale Deed through Demand Draft.</li>
+                                    <li style={{ marginBottom: '5px' }}>That out of the said total consideration, an amount of Rs. {formData.financials.tokenAdvance1.amount} (Rupees {numberToWords(formData.financials.tokenAdvance1.amount)}) {verb(buyersCount, 'has', 'have')} been paid by the {secondPartyShort} to the {firstPartyShort} as token advance on {formData.financials.tokenAdvance1.dateText} through {formData.financials.tokenAdvance1.method} with Transaction ID {formData.financials.tokenAdvance1.txnId}.</li>
+                                    <li style={{ marginBottom: '5px' }}>That a further amount of Rs. {formData.financials.tokenAdvance2.amount} (Rupees {numberToWords(formData.financials.tokenAdvance2.amount)}) {verb(buyersCount, 'has', 'have')} been paid by the {secondPartyShort} to the {firstPartyShort} as token advance on {formData.financials.tokenAdvance2.dateText} through {formData.financials.tokenAdvance2.method} with Transaction ID {formData.financials.tokenAdvance2.txnId}.</li>
+                                    <li style={{ marginBottom: '5px' }}>That at the time of signing of this Memorandum of Understanding on {dateToWords(formData.agreementDate)} an amount of Rs. {formData.financials.signingAmount} (Rupees {numberToWords(formData.financials.signingAmount)}) will be paid by the {secondPartyShort} to the {firstPartyShort}.</li>
+                                    <li style={{ marginBottom: '5px' }}>That at the time of signing of the Agreement of Sale on or before {formData.financials.agreementSaleDateText} an amount of Rs. {formData.financials.agreementSaleAmount} (Rupees {numberToWords(formData.financials.agreementSaleAmount)}) shall be paid by the {secondPartyShort} to the {firstPartyShort}.</li>
+                                    <li style={{ marginBottom: '5px' }}>That the said balance amount of Rs. {formData.financials.balanceAmount} (Rupees {numberToWords(formData.financials.balanceAmount)}) shall be disbursed by the {secondPartyShort} to the {firstPartyShort} on the date of Registration of the Sale Deed through Demand Draft.</li>
                                     <li>That the {secondPartyShort} shall deduct applicable {tdsRate}% TDS and shall furnish Form 16B (TDS Certificate) to the {firstPartyShort} as proof of deduction and remittance of the said TDS in accordance with applicable law.</li>
                                 </ol>
                             </li>
                             <li style={{ marginBottom: '10px' }}>
                                 In the event:
                                 <ol type="a" style={previewNestedOlStyle}>
-                                    <li style={{marginBottom: '5px'}}>If the {secondPartyShort} backs out after the {firstPartyShort} {verb(sellersCount, 'has', 'have')} made the transfer of amount as per the transaction mentioned in this MOU, the {secondPartyShort} agrees to pay Rs. {formData.financials.cancellationCharge} (Rupees {numberToWords(formData.financials.cancellationCharge)}) towards back-out / cancellation charges.</li>
+                                    <li style={{ marginBottom: '5px' }}>If the {secondPartyShort} backs out after the {firstPartyShort} {verb(sellersCount, 'has', 'have')} made the transfer of amount as per the transaction mentioned in this MOU, the {secondPartyShort} agrees to pay Rs. {formData.financials.cancellationCharge} (Rupees {numberToWords(formData.financials.cancellationCharge)}) towards back-out / cancellation charges.</li>
                                     <li>If the {firstPartyShort} backs out or withdraws from the transaction after execution of this MOU, the {firstPartyShort} shall pay the {secondPartyShort} an amount of Rs. {formData.financials.cancellationCharge} (Rupees {numberToWords(formData.financials.cancellationCharge)}) as cancellation charges.</li>
                                 </ol>
                             </li>
@@ -785,7 +785,7 @@ const MOUEditor = () => {
                             </li>
                             <li style={{ marginBottom: '10px' }}>
                                 ARBITRATION: Should any dispute arise between the parties hereto at anytime during the tenure of this MOU, the same shall, as soon as the dispute shall arise, be referred to the sole arbitration of a person to be mutually agreed to by both the parties to this MOU.
-                                <br/><br/>
+                                <br /><br />
                                 The arbitration shall be conducted as per the rules of the Indian Arbitration and Conciliation Act, 1996 (as amended from time to time) and the place of arbitration shall be at Bangalore. It is being fully understood between the parties that the Arbitrator as mentioned in this clause shall be mutually decided between the parties, within a period of 15 days after either of the parties to this Agreement gives notice in writing to the other regarding the same.
                             </li>
                             <li style={{ marginBottom: '10px' }}>
@@ -798,7 +798,7 @@ const MOUEditor = () => {
 
                         {/* Schedules - above witness/signatures */}
                         <div style={{ marginTop: '30px' }}></div>
-                        
+
                         <div style={{ textAlign: 'center', fontWeight: 'bold' }}>SCHEDULE 'A'</div>
                         <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of Entire Property)</div>
                         <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleA || ' '}</p>
@@ -811,7 +811,6 @@ const MOUEditor = () => {
                         <div style={{ textAlign: 'center', fontSize: '10pt', fontStyle: 'italic' }}>(Description of the Apartment)</div>
                         <p style={{ textAlign: 'justify', marginTop: '10px' }}>{formData.property.scheduleC || ' '}</p>
 
-                        <div style={{ pageBreakBefore: 'always' }}></div>
 
                         <p style={{ marginTop: '30px', textAlign: 'justify' }}>
                             IN WITNESS WHEREOF the above-mentioned parties have signed this MOU on the day, month and year mentioned above in the presence of the following;
@@ -825,16 +824,16 @@ const MOUEditor = () => {
                                     <div style={{ flex: 1 }}>
                                         <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>WITNESSES:</div>
                                         <div style={{ marginBottom: '10px' }}>
-                                            1. ____________________________<br/>
+                                            1. ____________________________<br />
                                             (Name & Address)
                                         </div>
                                         <div>
-                                            2. ____________________________<br/>
+                                            2. ____________________________<br />
                                             (Name & Address)
                                         </div>
                                     </div>
-                                    <div style={{ minWidth: '200px', paddingTop: '40px' }}>
-                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
+                                    <div style={{ minWidth: '200px', paddingTop: '40px', textAlign: 'center' }}>
+                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px', marginLeft: 'auto', marginRight: 'auto' }}></div>
                                         <b>({firstPartyShort.toUpperCase()})</b>
                                     </div>
                                 </div>
@@ -846,16 +845,16 @@ const MOUEditor = () => {
                                     <div style={{ flex: 1 }}>
                                         <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>WITNESSES:</div>
                                         <div style={{ marginBottom: '10px' }}>
-                                            1. ____________________________<br/>
+                                            1. ____________________________<br />
                                             (Name & Address)
                                         </div>
                                         <div>
-                                            2. ____________________________<br/>
+                                            2. ____________________________<br />
                                             (Name & Address)
                                         </div>
                                     </div>
-                                    <div style={{ minWidth: '200px', paddingTop: '40px' }}>
-                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
+                                    <div style={{ minWidth: '200px', paddingTop: '40px', textAlign: 'center' }}>
+                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px', marginLeft: 'auto', marginRight: 'auto' }}></div>
                                         <b>({secondPartyShort.toUpperCase()})</b>
                                     </div>
                                 </div>
@@ -868,21 +867,21 @@ const MOUEditor = () => {
 
             {/* Mobile Tab Navigation */}
             <div className="mobile-tabs">
-                <button 
-                    className={mobileView === 'form' ? 'active' : ''} 
+                <button
+                    className={mobileView === 'form' ? 'active' : ''}
                     onClick={() => setMobileView('form')}
                 >
                     <FileText size={20} />
                     <span>Form</span>
                 </button>
-                <button 
-                    className={mobileView === 'preview' ? 'active' : ''} 
+                <button
+                    className={mobileView === 'preview' ? 'active' : ''}
                     onClick={() => setMobileView('preview')}
                 >
                     <FileText size={20} />
                     <span>Preview</span>
                 </button>
-                <button 
+                <button
                     onClick={() => handleDownloadRequest('PDF')}
                     disabled={loading}
                 >
@@ -892,9 +891,9 @@ const MOUEditor = () => {
             </div>
 
             {/* Modal */}
-            <UserDetailsModal 
-                isOpen={modalOpen} 
-                onClose={handleModalClose} 
+            <UserDetailsModal
+                isOpen={modalOpen}
+                onClose={handleModalClose}
                 onSubmit={handleModalSubmit}
                 title={downloadType === 'PDF' ? 'PDF Document' : 'Word Document'}
             />
