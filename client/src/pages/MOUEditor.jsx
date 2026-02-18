@@ -701,7 +701,7 @@ const MOUEditor = () => {
                     }}>
 
                         <div style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '25px' }}>
-                            <div style={{ textDecoration: 'underline', fontSize: '14pt' }}>MEMORANDUM OF UNDERSTANDING</div>
+                            <div style={{ textDecoration: 'underline', fontSize: '14pt', textAlign: 'center' }}>MEMORANDUM OF UNDERSTANDING</div>
                         </div>
 
                         <p style={{ textAlign: 'justify', margin: '0 0 10pt 0' }}>
@@ -832,8 +832,8 @@ const MOUEditor = () => {
                                             (Name & Address)
                                         </div>
                                     </div>
-                                    <div style={{ minWidth: '200px', paddingTop: '40px', textAlign: 'center' }}>
-                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px', marginLeft: 'auto', marginRight: 'auto' }}></div>
+                                    <div style={{ minWidth: '200px', paddingTop: '40px' }}>
+                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
                                         <b>({firstPartyShort.toUpperCase()})</b>
                                     </div>
                                 </div>
@@ -853,8 +853,8 @@ const MOUEditor = () => {
                                             (Name & Address)
                                         </div>
                                     </div>
-                                    <div style={{ minWidth: '200px', paddingTop: '40px', textAlign: 'center' }}>
-                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px', marginLeft: 'auto', marginRight: 'auto' }}></div>
+                                    <div style={{ minWidth: '200px', paddingTop: '40px' }}>
+                                        <div style={{ borderTop: '1px solid black', width: '200px', marginBottom: '5px' }}></div>
                                         <b>({secondPartyShort.toUpperCase()})</b>
                                     </div>
                                 </div>
