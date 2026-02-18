@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rental Agreement Drafter | Vault</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- PDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    body {
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:#f5f8fd;
+      color:#102a43;
+    }
+
+    .nav {
+      background:white;
+      padding:16px 30px;
+      font-weight:bold;
+      box-shadow:0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .container {
+      display:flex;
+      padding:30px;
+      gap:20px;
+    }
+
+    .editor, .preview {
+      background:white;
+      padding:20px;
+      border-radius:10px;
+      width:50%;
+      box-shadow:0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width:100%;
+      padding:8px;
+      margin-bottom:10px;
+      border:1px solid #ddd;
+      border-radius:6px;
+      box-sizing: border-box; /* Fix padding issue */
+    }
+
+    button {
+      background:#3557f2;
+      color:white;
+      border:none;
+      padding:10px 15px;
+      border-radius:6px;
+      cursor:pointer;
+      margin-top:10px;
+      width:100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav">VAULT – Rental Agreement Draft</div>
+
+<div class="container">
+
+  <!-- LEFT: FORM -->
+  <div class="editor">
+    <h3>Fill Details</h3>
+
+    <label for="landlord">Landlord Name</label>
+    <input id="landlord" placeholder="Landlord Name">
+    
+    <label for="tenant">Tenant Name</label>
+    <input id="tenant" placeholder="Tenant Name">
+    
+    <label for="property">Property Address</label>
+    <input id="property" placeholder="Property Address">
+    
+    <label for="startDate">Lease Start Date</label>
+    <input id="startDate" placeholder="DD/MM/YYYY">
+    
+    <label for="endDate">Lease End Date</label>
+    <input id="endDate" placeholder="DD/MM/YYYY">
+
+    <label for="rentAmount">Monthly Rent (₹)</label>
+    <input id="rentAmount" placeholder="Amount">
+    
+    <label for="depositAmount">Security Deposit (₹)</label>
+    <input id="depositAmount" placeholder="Amount">
+
+
+    <button onclick="updateDraft()">Update Draft</button>
+    <button onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <!-- RIGHT: PREVIEW -->
+  <div class="preview" id="draft">
+    <h2 style="text-align:center">RENTAL AGREEMENT</h2>
+
+    <p>
+      This Rental Agreement is made on this day between
+      <b id="d_landlord">[Landlord]</b> (hereinafter referred to as the 'Landlord') and
+      <b id="d_tenant">[Tenant]</b> (hereinafter referred to as the 'Tenant').
+    </p>
+
+    <p>
+      <strong>1. PROPERTY:</strong> The Landlord agrees to let out the property located at
+      <b id="d_property">[Property Address]</b> to the Tenant.
+    </p>
+
+    <p>
+      <strong>2. TERM:</strong> The lease shall commence on <b id="d_startDate">[Start Date]</b>
+      and end on <b id="d_endDate">[End Date]</b>.
+    </p>
+
+    <p>
+      <strong>3. RENT:</strong> The Tenant agrees to pay a monthly rent of ₹<b id="d_rentAmount">[Rent Amount]</b>
+      payable in advance on or before the 5th of every month.
+    </p>
+
+    <p>
+      <strong>4. SECURITY DEPOSIT:</strong> The Tenant has paid a security deposit of ₹<b id="d_depositAmount">[Deposit Amount]</b>
+      which shall be refunded at the time of vacating the premises, subject to deductions for damages/unpaid bills.
+    </p>
+
+    <p>
+      <strong>5. MAINTENANCE:</strong> The Tenant shall maintain the premises in good condition and shall not make any structural changes without prior permission from the Landlord.
+    </p>
+
+    <br><br><br>
+    
+    <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+        <div>
+            <p>____________________</p>
+            <p>Landlord Signature</p>
+        </div>
+        <div>
+            <p>____________________</p>
+            <p>Tenant Signature</p>
+        </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function updateDraft(){
+  d_landlord.innerText = landlord.value || "[Landlord]";
+  d_tenant.innerText = tenant.value || "[Tenant]";
+  d_property.innerText = property.value || "[Property]";
+  d_startDate.innerText = startDate.value || "[Start Date]";
+  d_endDate.innerText = endDate.value || "[End Date]";
+  d_rentAmount.innerText = rentAmount.value || "[Rent Amount]";
+  d_depositAmount.innerText = depositAmount.value || "[Deposit Amount]";
+}
+
+function downloadPDF(){
+  let phone = prompt("Enter your phone number to download the draft");
+
+  if(!phone){
+    alert("Phone number is required");
+    return;
+  }
+
+  // Here you can later send phone to backend / Google Sheet
+
+  // Helper to clone and format for PDF if needed, but direct element is usually fine for simple cases
+  const element = document.getElementById("draft");
+  
+  const opt = {
+    margin:       [0.5, 0.5, 0.5, 0.5], // top, left, bottom, right
+    filename:     'Rental_Agreement.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(element).save();
+}
+</script>
+
+</body>
+</html>
